@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_PUBLIC_URL")
+}
+
+model Organization {
+  id          String    @id @unique
+  members     Client[]
+  industry    Industry
+  financeData Finance[]
+  createdAt   DateTime
+}
+
+enum Industry {
+  TECH
+  FINANCE
+  HEALTHCARE
+  EDUCATION
+  RETAIL
+  MANUFACTURING
+}
+
+model Client {
+  id        String           @id @unique
+  ofOrg     Organization     @relation(fields: [orgId], references: [id])
+  orgId     String
+  role      MemberAccessType
+  email     String
+  firstname String
+  lastname  String
+}
+
+enum MemberAccessType {
+  EXECUTIVE
+  MANAGEMENT
+  MEMBER
+}
+
+model Finance {
+  company Organization @relation(fields: [orgId], references: [id])
+
+  orgId     String @id
+  balance   Int
+  revenue   Int
+  expense   Int
+  netProfit Int
+  margin    Int
+}
+
+enum ExpenseType {
+  БАРАА_МАТЕРИАЛ
+  ТЭЭВЭР
+  УРСГАЛ_ЗАРДАЛ
+  ЦАЛИН
+}
