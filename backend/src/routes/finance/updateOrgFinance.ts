@@ -2,7 +2,7 @@ import type { RequestHandler } from "express";
 import prisma from "../../lib/prisma";
 
 export const addFinance: RequestHandler = async (req, res) => {
-  const { financeData } = req.body;
+  const { financeData } = req.body; //frontoos financedata gesen object avna shu
   const { orgId } = req.headers;
   if (!orgId) {
     return res.status(404).json({ message: "Couldn't find the company ID" });
