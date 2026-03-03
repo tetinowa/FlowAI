@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output   = "./generated"
 }
 
 datasource db {
@@ -19,7 +19,7 @@ model Organization {
   members     Client[]
   industry    Industry
   financeData Finance[]
-  createdAt   DateTime
+  createdAt   DateTime  @default(now())
 }
 
 enum Industry {
@@ -39,6 +39,7 @@ model Client {
   email     String
   firstname String
   lastname  String
+  createdAt DateTime         @default(now())
 }
 
 enum MemberAccessType {
@@ -48,9 +49,8 @@ enum MemberAccessType {
 }
 
 model Finance {
-  company Organization @relation(fields: [orgId], references: [id])
-
-  orgId     String @id
+  company   Organization @relation(fields: [orgId], references: [id])
+  orgId     String       @id
   balance   Int
   revenue   Int
   expense   Int
