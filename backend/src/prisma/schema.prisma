@@ -16,6 +16,7 @@ datasource db {
 
 model Organization {
   id          String    @id @unique
+  name String
   members     Client[]
   industry    Industry
   financeData Finance[]
@@ -53,12 +54,12 @@ model Finance {
   id        String       @id @default(cuid())  // ← @id болгох
   org       Organization @relation(fields: [orgId], references: [id])
   orgId     String                              // ← @id хасах
-  month     DateTime                            // ← нэмэх
-  balance   Int
-  revenue   Int
-  expense   Int
-  netProfit Int
-  margin    Int
+  month     DateTime?                          // ← нэмэх
+  balance   Int?
+  revenue   Int?
+  expense   Int?
+  netProfit Int?
+  margin    Int?
 }
 
 enum ExpenseType {
