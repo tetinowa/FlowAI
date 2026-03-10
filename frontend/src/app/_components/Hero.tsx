@@ -41,7 +41,6 @@ const Hero = () => {
           </div>
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-tr from-indigo-200 to-purple-200 blur-3xl opacity-40 rounded-full" />
-
             <img
               src="https://images.unsplash.com/photo-1551288049-bebda4e38f71"
               alt="Dashboard Preview"

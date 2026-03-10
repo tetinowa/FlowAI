@@ -26,21 +26,30 @@ export type AggregateOrganization = {
 
 export type OrganizationMinAggregateOutputType = {
   id: string | null
+<<<<<<< HEAD
   name: string | null
+=======
+>>>>>>> 755705e (woefbef)
   industry: $Enums.Industry | null
   createdAt: Date | null
 }
 
 export type OrganizationMaxAggregateOutputType = {
   id: string | null
+<<<<<<< HEAD
   name: string | null
+=======
+>>>>>>> 755705e (woefbef)
   industry: $Enums.Industry | null
   createdAt: Date | null
 }
 
 export type OrganizationCountAggregateOutputType = {
   id: number
+<<<<<<< HEAD
   name: number
+=======
+>>>>>>> 755705e (woefbef)
   industry: number
   createdAt: number
   _all: number
@@ -49,21 +58,30 @@ export type OrganizationCountAggregateOutputType = {
 
 export type OrganizationMinAggregateInputType = {
   id?: true
+<<<<<<< HEAD
   name?: true
+=======
+>>>>>>> 755705e (woefbef)
   industry?: true
   createdAt?: true
 }
 
 export type OrganizationMaxAggregateInputType = {
   id?: true
+<<<<<<< HEAD
   name?: true
+=======
+>>>>>>> 755705e (woefbef)
   industry?: true
   createdAt?: true
 }
 
 export type OrganizationCountAggregateInputType = {
   id?: true
+<<<<<<< HEAD
   name?: true
+=======
+>>>>>>> 755705e (woefbef)
   industry?: true
   createdAt?: true
   _all?: true
@@ -143,7 +161,10 @@ export type OrganizationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type OrganizationGroupByOutputType = {
   id: string
+<<<<<<< HEAD
   name: string
+=======
+>>>>>>> 755705e (woefbef)
   industry: $Enums.Industry
   createdAt: Date
   _count: OrganizationCountAggregateOutputType | null
@@ -171,22 +192,42 @@ export type OrganizationWhereInput = {
   OR?: Prisma.OrganizationWhereInput[]
   NOT?: Prisma.OrganizationWhereInput | Prisma.OrganizationWhereInput[]
   id?: Prisma.StringFilter<"Organization"> | string
+<<<<<<< HEAD
   name?: Prisma.StringFilter<"Organization"> | string
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.EnumIndustryFilter<"Organization"> | $Enums.Industry
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   members?: Prisma.ClientListRelationFilter
   financeData?: Prisma.FinanceListRelationFilter
+<<<<<<< HEAD
+<<<<<<< HEAD
   posts?: Prisma.PostListRelationFilter
+=======
+>>>>>>> 755705e (woefbef)
+=======
+  posts?: Prisma.PostListRelationFilter
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+<<<<<<< HEAD
   name?: Prisma.SortOrder
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   members?: Prisma.ClientOrderByRelationAggregateInput
   financeData?: Prisma.FinanceOrderByRelationAggregateInput
+<<<<<<< HEAD
+<<<<<<< HEAD
   posts?: Prisma.PostOrderByRelationAggregateInput
+=======
+>>>>>>> 755705e (woefbef)
+=======
+  posts?: Prisma.PostOrderByRelationAggregateInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
@@ -194,17 +235,30 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.OrganizationWhereInput | Prisma.OrganizationWhereInput[]
   OR?: Prisma.OrganizationWhereInput[]
   NOT?: Prisma.OrganizationWhereInput | Prisma.OrganizationWhereInput[]
+<<<<<<< HEAD
   name?: Prisma.StringFilter<"Organization"> | string
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.EnumIndustryFilter<"Organization"> | $Enums.Industry
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   members?: Prisma.ClientListRelationFilter
   financeData?: Prisma.FinanceListRelationFilter
+<<<<<<< HEAD
+<<<<<<< HEAD
   posts?: Prisma.PostListRelationFilter
+=======
+>>>>>>> 755705e (woefbef)
+=======
+  posts?: Prisma.PostListRelationFilter
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }, "id" | "id">
 
 export type OrganizationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+<<<<<<< HEAD
   name?: Prisma.SortOrder
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.OrganizationCountOrderByAggregateInput
@@ -217,89 +271,164 @@ export type OrganizationScalarWhereWithAggregatesInput = {
   OR?: Prisma.OrganizationScalarWhereWithAggregatesInput[]
   NOT?: Prisma.OrganizationScalarWhereWithAggregatesInput | Prisma.OrganizationScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Organization"> | string
+<<<<<<< HEAD
   name?: Prisma.StringWithAggregatesFilter<"Organization"> | string
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.EnumIndustryWithAggregatesFilter<"Organization"> | $Enums.Industry
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Organization"> | Date | string
 }
 
 export type OrganizationCreateInput = {
   id: string
+<<<<<<< HEAD
   name: string
   industry: $Enums.Industry
   createdAt?: Date | string
   members?: Prisma.ClientCreateNestedManyWithoutOfOrgInput
   financeData?: Prisma.FinanceCreateNestedManyWithoutOrgInput
   posts?: Prisma.PostCreateNestedManyWithoutOrgInput
+=======
+  industry: $Enums.Industry
+  createdAt?: Date | string
+  members?: Prisma.ClientCreateNestedManyWithoutOfOrgInput
+<<<<<<< HEAD
+  financeData?: Prisma.FinanceCreateNestedManyWithoutCompanyInput
+>>>>>>> 755705e (woefbef)
+=======
+  financeData?: Prisma.FinanceCreateNestedManyWithoutOrgInput
+  posts?: Prisma.PostCreateNestedManyWithoutOrgInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationUncheckedCreateInput = {
   id: string
+<<<<<<< HEAD
   name: string
   industry: $Enums.Industry
   createdAt?: Date | string
   members?: Prisma.ClientUncheckedCreateNestedManyWithoutOfOrgInput
   financeData?: Prisma.FinanceUncheckedCreateNestedManyWithoutOrgInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutOrgInput
+=======
+  industry: $Enums.Industry
+  createdAt?: Date | string
+  members?: Prisma.ClientUncheckedCreateNestedManyWithoutOfOrgInput
+<<<<<<< HEAD
+  financeData?: Prisma.FinanceUncheckedCreateNestedManyWithoutCompanyInput
+>>>>>>> 755705e (woefbef)
+=======
+  financeData?: Prisma.FinanceUncheckedCreateNestedManyWithoutOrgInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutOrgInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.ClientUpdateManyWithoutOfOrgNestedInput
   financeData?: Prisma.FinanceUpdateManyWithoutOrgNestedInput
   posts?: Prisma.PostUpdateManyWithoutOrgNestedInput
+=======
+  industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  members?: Prisma.ClientUpdateManyWithoutOfOrgNestedInput
+<<<<<<< HEAD
+  financeData?: Prisma.FinanceUpdateManyWithoutCompanyNestedInput
+>>>>>>> 755705e (woefbef)
+=======
+  financeData?: Prisma.FinanceUpdateManyWithoutOrgNestedInput
+  posts?: Prisma.PostUpdateManyWithoutOrgNestedInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.ClientUncheckedUpdateManyWithoutOfOrgNestedInput
   financeData?: Prisma.FinanceUncheckedUpdateManyWithoutOrgNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutOrgNestedInput
+=======
+  industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  members?: Prisma.ClientUncheckedUpdateManyWithoutOfOrgNestedInput
+<<<<<<< HEAD
+  financeData?: Prisma.FinanceUncheckedUpdateManyWithoutCompanyNestedInput
+>>>>>>> 755705e (woefbef)
+=======
+  financeData?: Prisma.FinanceUncheckedUpdateManyWithoutOrgNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutOrgNestedInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationCreateManyInput = {
   id: string
+<<<<<<< HEAD
   name: string
   industry: $Enums.Industry
   createdAt?: Date | string
+=======
+  industry: $Enums.Industry
+<<<<<<< HEAD
+  createdAt: Date | string
+>>>>>>> 755705e (woefbef)
+=======
+  createdAt?: Date | string
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OrganizationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OrganizationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+<<<<<<< HEAD
   name?: Prisma.SortOrder
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type OrganizationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+<<<<<<< HEAD
   name?: Prisma.SortOrder
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type OrganizationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+<<<<<<< HEAD
   name?: Prisma.SortOrder
+=======
+>>>>>>> 755705e (woefbef)
   industry?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -349,6 +478,10 @@ export type OrganizationUpdateOneRequiredWithoutFinanceDataNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutFinanceDataInput, Prisma.OrganizationUpdateWithoutFinanceDataInput>, Prisma.OrganizationUncheckedUpdateWithoutFinanceDataInput>
 }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
 export type OrganizationCreateNestedOneWithoutPostsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutPostsInput, Prisma.OrganizationUncheckedCreateWithoutPostsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutPostsInput
@@ -363,6 +496,7 @@ export type OrganizationUpdateOneRequiredWithoutPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutPostsInput, Prisma.OrganizationUpdateWithoutPostsInput>, Prisma.OrganizationUncheckedUpdateWithoutPostsInput>
 }
 
+<<<<<<< HEAD
 export type OrganizationCreateWithoutMembersInput = {
   id: string
   name: string
@@ -370,15 +504,42 @@ export type OrganizationCreateWithoutMembersInput = {
   createdAt?: Date | string
   financeData?: Prisma.FinanceCreateNestedManyWithoutOrgInput
   posts?: Prisma.PostCreateNestedManyWithoutOrgInput
+=======
+export type OrganizationCreateWithoutMembersInput = {
+  id: string
+  industry: $Enums.Industry
+  createdAt: Date | string
+  financeData?: Prisma.FinanceCreateNestedManyWithoutCompanyInput
+>>>>>>> 755705e (woefbef)
+=======
+export type OrganizationCreateWithoutMembersInput = {
+  id: string
+  industry: $Enums.Industry
+  createdAt?: Date | string
+  financeData?: Prisma.FinanceCreateNestedManyWithoutOrgInput
+  posts?: Prisma.PostCreateNestedManyWithoutOrgInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationUncheckedCreateWithoutMembersInput = {
   id: string
+<<<<<<< HEAD
   name: string
   industry: $Enums.Industry
   createdAt?: Date | string
   financeData?: Prisma.FinanceUncheckedCreateNestedManyWithoutOrgInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutOrgInput
+=======
+  industry: $Enums.Industry
+<<<<<<< HEAD
+  createdAt: Date | string
+  financeData?: Prisma.FinanceUncheckedCreateNestedManyWithoutCompanyInput
+>>>>>>> 755705e (woefbef)
+=======
+  createdAt?: Date | string
+  financeData?: Prisma.FinanceUncheckedCreateNestedManyWithoutOrgInput
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutOrgInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationCreateOrConnectWithoutMembersInput = {
@@ -399,38 +560,80 @@ export type OrganizationUpdateToOneWithWhereWithoutMembersInput = {
 
 export type OrganizationUpdateWithoutMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   financeData?: Prisma.FinanceUpdateManyWithoutOrgNestedInput
   posts?: Prisma.PostUpdateManyWithoutOrgNestedInput
+=======
+  industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+<<<<<<< HEAD
+  financeData?: Prisma.FinanceUpdateManyWithoutCompanyNestedInput
+>>>>>>> 755705e (woefbef)
+=======
+  financeData?: Prisma.FinanceUpdateManyWithoutOrgNestedInput
+  posts?: Prisma.PostUpdateManyWithoutOrgNestedInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationUncheckedUpdateWithoutMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   financeData?: Prisma.FinanceUncheckedUpdateManyWithoutOrgNestedInput
   posts?: Prisma.PostUncheckedUpdateManyWithoutOrgNestedInput
+=======
+  industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+<<<<<<< HEAD
+  financeData?: Prisma.FinanceUncheckedUpdateManyWithoutCompanyNestedInput
+>>>>>>> 755705e (woefbef)
+=======
+  financeData?: Prisma.FinanceUncheckedUpdateManyWithoutOrgNestedInput
+  posts?: Prisma.PostUncheckedUpdateManyWithoutOrgNestedInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationCreateWithoutFinanceDataInput = {
   id: string
+<<<<<<< HEAD
   name: string
   industry: $Enums.Industry
   createdAt?: Date | string
   members?: Prisma.ClientCreateNestedManyWithoutOfOrgInput
   posts?: Prisma.PostCreateNestedManyWithoutOrgInput
+=======
+  industry: $Enums.Industry
+  createdAt?: Date | string
+  members?: Prisma.ClientCreateNestedManyWithoutOfOrgInput
+<<<<<<< HEAD
+>>>>>>> 755705e (woefbef)
+=======
+  posts?: Prisma.PostCreateNestedManyWithoutOrgInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationUncheckedCreateWithoutFinanceDataInput = {
   id: string
+<<<<<<< HEAD
   name: string
   industry: $Enums.Industry
   createdAt?: Date | string
   members?: Prisma.ClientUncheckedCreateNestedManyWithoutOfOrgInput
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutOrgInput
+=======
+  industry: $Enums.Industry
+  createdAt?: Date | string
+  members?: Prisma.ClientUncheckedCreateNestedManyWithoutOfOrgInput
+<<<<<<< HEAD
+>>>>>>> 755705e (woefbef)
+=======
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutOrgInput
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationCreateOrConnectWithoutFinanceDataInput = {
@@ -451,15 +654,25 @@ export type OrganizationUpdateToOneWithWhereWithoutFinanceDataInput = {
 
 export type OrganizationUpdateWithoutFinanceDataInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.ClientUpdateManyWithoutOfOrgNestedInput
   posts?: Prisma.PostUpdateManyWithoutOrgNestedInput
+<<<<<<< HEAD
+=======
+  industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  members?: Prisma.ClientUpdateManyWithoutOfOrgNestedInput
+>>>>>>> 755705e (woefbef)
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationUncheckedUpdateWithoutFinanceDataInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -469,7 +682,10 @@ export type OrganizationUncheckedUpdateWithoutFinanceDataInput = {
 
 export type OrganizationCreateWithoutPostsInput = {
   id: string
+<<<<<<< HEAD
   name: string
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
   industry: $Enums.Industry
   createdAt?: Date | string
   members?: Prisma.ClientCreateNestedManyWithoutOfOrgInput
@@ -478,7 +694,10 @@ export type OrganizationCreateWithoutPostsInput = {
 
 export type OrganizationUncheckedCreateWithoutPostsInput = {
   id: string
+<<<<<<< HEAD
   name: string
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
   industry: $Enums.Industry
   createdAt?: Date | string
   members?: Prisma.ClientUncheckedCreateNestedManyWithoutOfOrgInput
@@ -503,7 +722,10 @@ export type OrganizationUpdateToOneWithWhereWithoutPostsInput = {
 
 export type OrganizationUpdateWithoutPostsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.ClientUpdateManyWithoutOfOrgNestedInput
@@ -512,11 +734,22 @@ export type OrganizationUpdateWithoutPostsInput = {
 
 export type OrganizationUncheckedUpdateWithoutPostsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+<<<<<<< HEAD
   name?: Prisma.StringFieldUpdateOperationsInput | string
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
   industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.ClientUncheckedUpdateManyWithoutOfOrgNestedInput
   financeData?: Prisma.FinanceUncheckedUpdateManyWithoutOrgNestedInput
+<<<<<<< HEAD
+=======
+  industry?: Prisma.EnumIndustryFieldUpdateOperationsInput | $Enums.Industry
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  members?: Prisma.ClientUncheckedUpdateManyWithoutOfOrgNestedInput
+>>>>>>> 755705e (woefbef)
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 
@@ -527,13 +760,27 @@ export type OrganizationUncheckedUpdateWithoutPostsInput = {
 export type OrganizationCountOutputType = {
   members: number
   financeData: number
+<<<<<<< HEAD
+<<<<<<< HEAD
   posts: number
+=======
+>>>>>>> 755705e (woefbef)
+=======
+  posts: number
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | OrganizationCountOutputTypeCountMembersArgs
   financeData?: boolean | OrganizationCountOutputTypeCountFinanceDataArgs
+<<<<<<< HEAD
+<<<<<<< HEAD
   posts?: boolean | OrganizationCountOutputTypeCountPostsArgs
+=======
+>>>>>>> 755705e (woefbef)
+=======
+  posts?: boolean | OrganizationCountOutputTypeCountPostsArgs
+>>>>>>> 987feec (3 clerk auth setup (#11))
 }
 
 /**
@@ -560,6 +807,10 @@ export type OrganizationCountOutputTypeCountFinanceDataArgs<ExtArgs extends runt
   where?: Prisma.FinanceWhereInput
 }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
 /**
  * OrganizationCountOutputType without action
  */
@@ -571,40 +822,72 @@ export type OrganizationCountOutputTypeCountPostsArgs<ExtArgs extends runtime.Ty
 export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+=======
+
+export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  id?: boolean
+>>>>>>> 755705e (woefbef)
   industry?: boolean
   createdAt?: boolean
   members?: boolean | Prisma.Organization$membersArgs<ExtArgs>
   financeData?: boolean | Prisma.Organization$financeDataArgs<ExtArgs>
+<<<<<<< HEAD
+<<<<<<< HEAD
   posts?: boolean | Prisma.Organization$postsArgs<ExtArgs>
+=======
+>>>>>>> 755705e (woefbef)
+=======
+  posts?: boolean | Prisma.Organization$postsArgs<ExtArgs>
+>>>>>>> 987feec (3 clerk auth setup (#11))
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
 
 export type OrganizationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+<<<<<<< HEAD
   name?: boolean
+=======
+>>>>>>> 755705e (woefbef)
   industry?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["organization"]>
 
 export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+<<<<<<< HEAD
   name?: boolean
+=======
+>>>>>>> 755705e (woefbef)
   industry?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["organization"]>
 
 export type OrganizationSelectScalar = {
   id?: boolean
+<<<<<<< HEAD
   name?: boolean
+=======
+>>>>>>> 755705e (woefbef)
   industry?: boolean
   createdAt?: boolean
 }
 
+<<<<<<< HEAD
 export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "industry" | "createdAt", ExtArgs["result"]["organization"]>
 export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   members?: boolean | Prisma.Organization$membersArgs<ExtArgs>
   financeData?: boolean | Prisma.Organization$financeDataArgs<ExtArgs>
   posts?: boolean | Prisma.Organization$postsArgs<ExtArgs>
+=======
+export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "industry" | "createdAt", ExtArgs["result"]["organization"]>
+export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  members?: boolean | Prisma.Organization$membersArgs<ExtArgs>
+  financeData?: boolean | Prisma.Organization$financeDataArgs<ExtArgs>
+<<<<<<< HEAD
+>>>>>>> 755705e (woefbef)
+=======
+  posts?: boolean | Prisma.Organization$postsArgs<ExtArgs>
+>>>>>>> 987feec (3 clerk auth setup (#11))
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -615,11 +898,20 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
   objects: {
     members: Prisma.$ClientPayload<ExtArgs>[]
     financeData: Prisma.$FinancePayload<ExtArgs>[]
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
     posts: Prisma.$PostPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+=======
+  }
+  scalars: runtime.Types.Extensions.GetPayloadResult<{
+    id: string
+>>>>>>> 755705e (woefbef)
     industry: $Enums.Industry
     createdAt: Date
   }, ExtArgs["result"]["organization"]>
@@ -1018,7 +1310,14 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   readonly [Symbol.toStringTag]: "PrismaPromise"
   members<T extends Prisma.Organization$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   financeData<T extends Prisma.Organization$financeDataArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$financeDataArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FinancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+<<<<<<< HEAD
+<<<<<<< HEAD
   posts<T extends Prisma.Organization$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+=======
+>>>>>>> 755705e (woefbef)
+=======
+  posts<T extends Prisma.Organization$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+>>>>>>> 987feec (3 clerk auth setup (#11))
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1049,7 +1348,10 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
  */
 export interface OrganizationFieldRefs {
   readonly id: Prisma.FieldRef<"Organization", 'String'>
+<<<<<<< HEAD
   readonly name: Prisma.FieldRef<"Organization", 'String'>
+=======
+>>>>>>> 755705e (woefbef)
   readonly industry: Prisma.FieldRef<"Organization", 'Industry'>
   readonly createdAt: Prisma.FieldRef<"Organization", 'DateTime'>
 }
@@ -1488,6 +1790,10 @@ export type Organization$financeDataArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
  * Organization.posts
  */
 export type Organization$postsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1512,6 +1818,11 @@ export type Organization$postsArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
+<<<<<<< HEAD
+=======
+>>>>>>> 755705e (woefbef)
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
  * Organization without action
  */
 export type OrganizationDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {

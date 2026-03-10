@@ -106,6 +106,7 @@ export type EnumMemberAccessTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumMemberAccessTypeFilter<$PrismaModel>
 }
 
+<<<<<<< HEAD
 export type DateTimeNullableFilter<$PrismaModel = never> = {
   equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel> | null
   in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -163,6 +164,8 @@ export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedIntNullableFilter<$PrismaModel>
 }
 
+=======
+>>>>>>> 755705e (woefbef)
 export type IntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -291,6 +294,7 @@ export type NestedEnumMemberAccessTypeWithAggregatesFilter<$PrismaModel = never>
   _max?: Prisma.NestedEnumMemberAccessTypeFilter<$PrismaModel>
 }
 
+<<<<<<< HEAD
 export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
   equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel> | null
   in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -354,6 +358,8 @@ export type NestedFloatNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null
 }
 
+=======
+>>>>>>> 755705e (woefbef)
 export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>

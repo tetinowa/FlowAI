@@ -425,6 +425,7 @@ export type PostUncheckedUpdateManyWithoutOrgNestedInput = {
   deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[]
 }
 
+<<<<<<< HEAD
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
@@ -433,6 +434,8 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+=======
+>>>>>>> 987feec (3 clerk auth setup (#11))
 export type PostCreateWithoutOrgInput = {
   id?: string
   title: string
