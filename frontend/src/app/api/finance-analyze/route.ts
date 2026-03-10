@@ -3,6 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 
 const ai =new GoogleGenAI({apiKey:process.env.GEMINI_API_KEY});
 
+/**
+ * Handle POST requests to analyze provided bank transactions with an AI model and return a categorized financial summary.
+ *
+ * The request body must be JSON with a `transactions` field (typically an array of bank transaction records). The handler sends the transactions to the AI, expects a JSON response with `summary`, `categories`, and `tips`, and returns that parsed JSON.
+ *
+ * @param request - The incoming Next.js request whose JSON body contains a `transactions` field
+ * @returns The AI-generated analysis object with the schema `{ summary, categories: [{ name, total }], tips }`, or an error object `{ error: "Сервер дээр алдаа гарлаа" }` on failure
+ */
 export async function POST(request: NextRequest) {
     try {
       const body= await request.json();

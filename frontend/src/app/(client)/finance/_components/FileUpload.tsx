@@ -12,6 +12,13 @@ interface Transaction {
     [key: string]: string | number;
 }
 
+/**
+ * Render a card-style file upload UI that parses an uploaded Excel/CSV into transactions and can send them to an AI analysis endpoint.
+ *
+ * The component displays a file input, shows the uploaded file name after successful parsing, and provides a button to POST the parsed transactions to /api/finance-analyze. Maintains local state for parsed transactions, the selected file name, AI analysis result, and a loading flag.
+ *
+ * @returns A JSX element containing the file upload form, file status, and an AI analysis trigger button
+ */
 export default function FileUpload() {
     const [data, setData] = useState<Transaction[]>([]);
     const [fileName, setFileName] = useState<string | null>(null);

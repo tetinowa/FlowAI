@@ -5,6 +5,15 @@ import { Label as LabelPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Renders a styled label element and forwards all props to the underlying label root.
+ *
+ * Merges the provided `className` with the component's default styling and includes a
+ * `data-slot="label"` attribute for slotting and styling purposes.
+ *
+ * @param className - Additional CSS classes to merge with the component's default classes
+ * @returns The rendered label JSX element
+ */
 function Label({
   className,
   ...props
