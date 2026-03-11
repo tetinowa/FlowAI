@@ -35,7 +35,7 @@ export function AppSidebar() {
           </div>
           <div className="flex flex-col">
             <span className="text-sidebar-foreground text-base font-bold leading-none">
-              Nexus AI
+              Flow AI
             </span>
             <span className="text-sidebar-foreground/50 text-xs font-medium">
               SaaS Insights

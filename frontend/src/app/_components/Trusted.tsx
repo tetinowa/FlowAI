@@ -10,7 +10,7 @@ const logos = [
 
 export default function TrustedBy() {
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-6 text-center">
         <p className="text-sm font-semibold text-gray-500 tracking-widest uppercase">
           10,000 гаруй өсөн нэмэгдэж буй бизнесүүдийн итгэлийг хүлээсэн

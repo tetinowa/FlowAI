@@ -21,13 +21,15 @@ export default function Cta() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               size="lg"
-              className="rounded-full bg-white text-indigo-600 hover:bg-white/90 px-8 py-6 text-base font-semibold">
+              className="rounded-full bg-white text-indigo-600 hover:bg-white/90 px-8 py-6 text-base font-semibold"
+            >
               14 хоногийн үнэгүй туршилтаа эхлүүлэх
             </Button>
 
             <Button
               size="lg"
-              className="rounded-full bg-white text-indigo-600 hover:bg-white/90 px-8 py-6 text-base font-semibold">
+              className="rounded-full bg-white text-indigo-600 hover:bg-white/90 px-8 py-6 text-base font-semibold"
+            >
               Борлуулалтын багтай холбогдох
             </Button>
           </div>

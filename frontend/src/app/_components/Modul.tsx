@@ -3,7 +3,7 @@ import { CheckCircle2, Megaphone, Wallet } from "lucide-react";
 
 export default function Modul() {
   return (
-    <section className="w-full bg-[#fafafa] py-20">
+    <section className="w-full bg-gray-50 py-20">
       <div className="container mx-auto px-6">
         <div className="mb-12 max-w-2xl">
           <p className="text-sm font-semibold text-indigo-500 mb-2">модулиуд</p>

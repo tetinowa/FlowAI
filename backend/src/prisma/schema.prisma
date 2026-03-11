@@ -16,12 +16,12 @@ datasource db {
 
 model Organization {
   id          String    @id @unique
-  name        String
+  name        String    @default("")   // ← @default нэмэх
   members     Client[]
   industry    Industry
   financeData Finance[]
+  posts       Post[]
   createdAt   DateTime  @default(now())
-  posts Post[]
 }
 
 enum Industry {
