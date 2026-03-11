@@ -28,7 +28,7 @@ const ChatSection = ({
   return (
     <>
       <Card
-        className={`absolute top-10 right-5 w-1/3 max-w-2xl aspect-3/5 rounded-2xl shadow-xl shadow-gray-300`}
+        className={`fixed bottom-24 right-6 w-96 max-w-[90vw] h-125 rounded-2xl shadow-xl shadow-gray-300`}
       >
         <div className="w-full h-full relative">
           <div className={`px-5 flex gap-2 items-center`}>

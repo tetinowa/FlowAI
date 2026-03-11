@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AppSidebar } from "./dashboard/_components/dashboard/Sidebar";
 import { TopBar } from "./dashboard/_components/dashboard/TopBar";
+import ChatBubble from "@/app/_components/ChatBubble";
 
 /**
  * Layout component that enforces onboarding completion and renders the dashboard shell.
@@ -40,6 +41,9 @@ export default function ClientLayout({
         <TopBar />
         {children}
       </SidebarInset>
+      <div className="fixed bottom-6 right-6 z-50">
+        <ChatBubble />
+      </div>
     </SidebarProvider>
   );
 }

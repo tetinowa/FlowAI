@@ -22,7 +22,7 @@ export const Chat: RequestHandler = async (req, res) => {
       return res.status(401).json({ message: "input invalid" });
     }
     const chat = ai.chats.create({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       history,
       config: {
         systemInstruction:
