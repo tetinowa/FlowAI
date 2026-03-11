@@ -19,8 +19,9 @@ model Organization {
   name        String    @default("")   // ← @default нэмэх
   members     Client[]
   industry    Industry
-  financeData Finance[]
-  posts       Post[]
+  financeData      Finance[]
+  financeAnalyses  FinanceAnalysis[]
+  posts            Post[]
   createdAt   DateTime  @default(now())
 }
 
@@ -69,12 +70,23 @@ enum ExpenseType {
   ЦАЛИН
 }
 
+model FinanceAnalysis {
+  id         String       @id @default(cuid())
+  org        Organization @relation(fields: [orgId], references: [id])
+  orgId      String
+  summary    String
+  categories Json
+  tips       Json
+  createdAt  DateTime     @default(now())
+}
+
 model Post {
   id          String       @id @default(cuid())
   org         Organization @relation(fields: [orgId], references: [id])
   orgId       String
   title       String
+  content     String       @default("")
   platform    String
-  reach       Int
+  reach       Int          @default(0)
   publishedAt DateTime     @default(now())
 }

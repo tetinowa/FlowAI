@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Post" ADD COLUMN     "content" TEXT NOT NULL DEFAULT '',
+ALTER COLUMN "reach" SET DEFAULT 0;
