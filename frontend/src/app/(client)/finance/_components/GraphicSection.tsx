@@ -31,7 +31,7 @@ const Colors = ["#10b981", "#3b82f6", "#f59e0b", "#f43f5e"];
 
 export const GraphicSection = () => {
     return (
-        <div className="bg-gray-100 w-full flex flex-row gap-10 p-5">
+        <div className="bg-gray-100 w-full flex-1 flex flex-row gap-10 p-5">
             <div className="flex w-[50%] flex-col justify-between">
                 <div className="flex flex-row justify-between w-full">
                     <p className="text-lg font-bold mb-4">Орлого & Зарлагын график</p>

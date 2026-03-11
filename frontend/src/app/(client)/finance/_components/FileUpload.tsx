@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-import { UploadCloud, FileSpreadsheet } from "lucide-react";
+import { UploadCloud, FileSpreadsheet, Table2, Ghost, Trash } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,51 +11,73 @@ import { Button } from "@/components/ui/button";
 interface Transaction {
     [key: string]: string | number;
 }
+interface UploadedFile {
+    name:string;
+    data:Transaction[];
+}
 
-/**
- * Render a card-style file upload UI that parses an uploaded Excel/CSV into transactions and can send them to an AI analysis endpoint.
- *
- * The component displays a file input, shows the uploaded file name after successful parsing, and provides a button to POST the parsed transactions to /api/finance-analyze. Maintains local state for parsed transactions, the selected file name, AI analysis result, and a loading flag.
- *
- * @returns A JSX element containing the file upload form, file status, and an AI analysis trigger button
- */
 export default function FileUpload() {
-    const [data, setData] = useState<Transaction[]>([]);
-    const [fileName, setFileName] = useState<string | null>(null);
+    const [uploadedFiles, setUploadeddFiles]=useState<UploadedFile[]>([])
     const [aiResult, setAiResult]=useState<any>(null);
     const [isLoading, setIsLoading] =useState(false);
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const filesList=e.target.files
+    if (!filesList || filesList.length===0) return;
 
-        setFileName(file.name);
+        const files = Array.from(filesList)
 
-        const reader = new FileReader();
+        const readFilesPromises=files.map(file=> {
+            return new Promise<UploadedFile>((resolve, reject) =>{
+                const reader =new FileReader()
 
-        reader.onload = (event) => {
-            const buffer = event.target?.result;
-            const workbook = XLSX.read(buffer, { type: "array" });
-
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-
-            const jsonData = XLSX.utils.sheet_to_json<Transaction>(worksheet);
-            setData(jsonData);
+                reader.onload = (event) => {
+                    try {
+                        const buffer = event.target?.result;
+                        const workbook = XLSX.read(buffer, { type: "array" });
+                        
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+                        
+                        const jsonData = XLSX.utils.sheet_to_json<Transaction>(worksheet);
+                        resolve({name: file.name, data:jsonData});
+                    } catch (error) {
+                        console.error(`${file.name} файлыг уншихад алдаа гарлаа.`, error);
+                        resolve({name:file.name, data:[]});
+                    }
         };
+        reader.onerror =(error)=> {
+            console.error("Файл унших алдаа:", error);
+            reject(error);
+        };
+        reader.readAsArrayBuffer(file)
+            })
+        })
 
-        reader.readAsArrayBuffer(file);
+        try {
+            const parsedFiles= await Promise.all(readFilesPromises);
+            setUploadeddFiles(prev=>[...prev, ...parsedFiles])
+        }catch(error){
+            console.error("Өгөгдлүүдийг нэгтгэх үед алдаа гарлаа.", error);
+        }
+        e.target.value="";
     };
 
+    const removeFile=(indexToRemove:number)=>{
+        setUploadeddFiles(prev=> prev.filter((_, index)=>index !== indexToRemove))
+    }
+
     const analyzeWithAI= async()=>{
-        if(data.length ===0) return;
+        if(uploadedFiles.length ===0) return;
         setIsLoading(true);
+
+        const allTransactions=uploadedFiles.flatMap(file=>file.data)
 
         try{
             const response =await fetch ("/api/finance-analyze", {
                 method:"POST",
                 headers:{"Content-type":"application/json"},
-                body:JSON.stringify({transactions:data})
+                body:JSON.stringify({transactions: allTransactions})
             })
             const result= await response.json();
             setAiResult(result);
@@ -68,7 +90,7 @@ export default function FileUpload() {
     };
 
     return (
-        <div className="w-screen flex space-y-6 mt-10">
+        <div className="w-full flex-1 flex space-y-6 mt-10">
             <Card className="w-full">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -76,7 +98,7 @@ export default function FileUpload() {
                         Дансны хуулга оруулах
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-6">
                     <div className="grid w-full max-w-sm items-center gap-1.5">
                         <Label htmlFor="statement-upload">Excel файл сонгоно уу</Label>
                         <Input
@@ -84,23 +106,38 @@ export default function FileUpload() {
                             type="file"
                             accept=".xlsx, .xls, .csv"
                             onChange={handleFileUpload}
+                            multiple
                         />
                     </div>
 
-                    {fileName && (
-                        <div className="flex flex-col gap-4">
-
-                        <p className="text-sm text-muted-foreground flex items-center gap-2">
-                            <FileSpreadsheet className="h-4 w-4" />
-                            {fileName} амжилттай уншигдлаа.
-                        </p>
-                        <Button onClick={analyzeWithAI}
-                        disabled={isLoading || data.length===0}
-                        className="w-fit">
+                    {uploadedFiles.length>0  && (
+                        
+                        <div className="flex  flex-col items-start gap-2">
+                         {uploadedFiles.map((file, index) => (
+                    <div key={index} className="flex flex-row items-center justify-between p-2 border rounded-md">
+                        <div className="flex flex-row items-center gap-2 overflow-hidden">
+                        <FileSpreadsheet className="h-4 w-4" />
+                        <span className="text-sm truncate" title={file.name}>
+                        {file.name} амжилттай нэмэгдлээ.
+                        </span>
+                        </div>
+                        <Button variant="ghost"
+                        size="icon"
+                        onClick={()=>removeFile(index)}>
+                            <Trash className="h-4 w-4 text-red-500"/>
+                        </Button>
+                       
+                    </div>
+                ))}
+                        </div>
+                        
+                    )}
+                     <Button onClick={analyzeWithAI}
+                        disabled={isLoading || uploadedFiles.length===0}
+                        variant={"outline"}
+                        className="w-fit bg-blue-600 text-white">
                             {isLoading ? "Шинжилж байна..." : " AI-аар шинжлүүлэх"}
                         </Button>
-                        </div>
-                    )}
                 </CardContent>
             </Card>
         </div>

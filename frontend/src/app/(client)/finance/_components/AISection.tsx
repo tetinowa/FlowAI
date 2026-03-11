@@ -6,7 +6,7 @@ import { Lightbulb } from 'lucide-react';
 
 export const AISection = () => {
     return (
-        <div className="bg-gray-100 w-screen flex flex-row gap-10 p-5 flex-wrap">
+        <div className="bg-gray-100 w- full flex-1 flex flex-row gap-10 p-5 flex-wrap">
             <div className="bg-blue-500 w-full h-40 rounded-3xl flex flex-row items-center p-10 gap-5">
                 <Button
                     variant="outline"

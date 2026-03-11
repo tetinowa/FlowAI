@@ -4,7 +4,7 @@ import { Download } from "lucide-react";
 
 export const HeadSection = () => {
   return (
-    <div className="bg-gray-100 w-screen flex flex-row justify-between p-5">
+    <div className="bg-gray-100 w-full flex-1 flex flex-row justify-between p-5">
       <div className="flex flex-col">
         <p className="text-3xl text-slate-900 font-bold">
           Санхүүгийн хиймэл оюун ухаан

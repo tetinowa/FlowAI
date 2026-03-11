@@ -29,7 +29,7 @@ const data = [
 
 export const Dashboard = () => {
   return (
-    <div className="bg-gray-100 w-screen flex flex-row gap-10 p-5 flex-wrap">
+    <div className="bg-gray-100 w-screen flex flex-row gap-10 p-5 flex-wrap flex-1">
       {data.map((item) => (
         <RevenueCard
           key={item.id}
