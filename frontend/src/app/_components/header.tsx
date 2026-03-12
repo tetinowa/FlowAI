@@ -21,7 +21,7 @@ export const Header = () => {
           <ChatBubble />
           <SignedOut>
             <SignInButton mode="modal">
-              <Button className="bg-[#5048e5] hover:bg-[#4038d4] text-black rounded-xl">
+              <Button className="bg-[#5048e5] hover:bg-[#4038d4] text-white rounded-xl">
                 Эхлэх
               </Button>
             </SignInButton>

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 export default function FinanceForm({ onClose }: { onClose: () => void }) {
+  const { getToken } = useAuth();
   const [form, setForm] = useState({
     title: "",
     amount: "",
@@ -10,18 +12,37 @@ export default function FinanceForm({ onClose }: { onClose: () => void }) {
     category: "",
     date: "",
   });
+  const [saving, setSaving] = useState(false);
 
   const handleChange = (e: any) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log(form);
-    onClose();
+    if (!form.title || !form.amount || !form.date) return;
+    setSaving(true);
+    try {
+      const token = await getToken();
+      const isIncome = form.type === "income";
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          month: new Date(form.date).toISOString(),
+          revenue: isIncome ? Number(form.amount) : 0,
+          expense: !isIncome ? Number(form.amount) : 0,
+        }),
+      });
+      onClose();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const incomeCategories = [
@@ -108,9 +129,10 @@ export default function FinanceForm({ onClose }: { onClose: () => void }) {
 
             <button
               type="submit"
-              className="px-3 py-1 bg-blue-500 text-white rounded"
+              disabled={saving}
+              className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-60"
             >
-              Хадгалах
+              {saving ? "Хадгалж байна..." : "Хадгалах"}
             </button>
           </div>
 
