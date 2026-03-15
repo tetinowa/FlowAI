@@ -1,9 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
 import * as XLSX from "xlsx";
-import { UploadCloud, FileSpreadsheet, Trash, Lightbulb, AlertTriangle, Sparkles, TrendingDown, TrendingUp, CheckCircle2, Plus, PenLine, Download } from "lucide-react";
+import {
+  UploadCloud,
+  FileSpreadsheet,
+  Trash,
+  Lightbulb,
+  AlertTriangle,
+  Sparkles,
+  TrendingDown,
+  TrendingUp,
+  CheckCircle2,
+  Plus,
+  PenLine,
+  Download,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,28 +47,67 @@ const toDateString = (val: any): string => {
 
 // Банк бүрийн өөр өөр column нэрийг стандарт нэрэнд normalize хийнэ
 const COLUMN_ALIASES: Record<string, string[]> = {
-  "Огноо": [
-    "огноо", "гүйлгээний огноо", "гүйлгээ хийсэн огноо", "огноо/цаг",
-    "date", "txn date", "value date", "trans date", "transaction date", "дата", "Тайлант огноо"
+  Огноо: [
+    "огноо",
+    "гүйлгээний огноо",
+    "гүйлгээ хийсэн огноо",
+    "огноо/цаг",
+    "date",
+    "txn date",
+    "value date",
+    "trans date",
+    "transaction date",
+    "дата",
+    "Тайлант огноо",
   ],
   "Гүйлгээний утга": [
-    "гүйлгээний утга", "утга", "тайлбар", "гүйлгээ", "мэдээлэл",
-    "description", "particulars", "narration", "дэлгэрэнгүй", "details",
+    "гүйлгээний утга",
+    "утга",
+    "тайлбар",
+    "гүйлгээ",
+    "мэдээлэл",
+    "description",
+    "particulars",
+    "narration",
+    "дэлгэрэнгүй",
+    "details",
   ],
-  "Орлого": [
-    "орлого", "кредит", "credit", "орлого дүн", "incoming",
-    "орлогын дүн", "deposit", "deposits", "cr", "зээл", "Кредит гүйлгээ"
+  Орлого: [
+    "орлого",
+    "кредит",
+    "credit",
+    "орлого дүн",
+    "incoming",
+    "орлогын дүн",
+    "deposit",
+    "deposits",
+    "cr",
+    "зээл",
+    "Кредит гүйлгээ",
   ],
-  "Зарлага": [
-    "зарлага", "дебет", "debit", "зарлага дүн", "outgoing",
-    "зарлагын дүн", "withdrawal", "withdrawals", "dr", "charges", "Дебит гүйлгээ"
+  Зарлага: [
+    "зарлага",
+    "дебет",
+    "debit",
+    "зарлага дүн",
+    "outgoing",
+    "зарлагын дүн",
+    "withdrawal",
+    "withdrawals",
+    "dr",
+    "charges",
+    "Дебит гүйлгээ",
   ],
 };
 
 const normalizeHeader = (header: string): string => {
   const lower = String(header).toLowerCase().trim();
   for (const [standard, aliases] of Object.entries(COLUMN_ALIASES)) {
-    if (lower === standard.toLowerCase() || aliases.some((a) => a.toLowerCase() === lower)) return standard;
+    if (
+      lower === standard.toLowerCase() ||
+      aliases.some((a) => a.toLowerCase() === lower)
+    )
+      return standard;
   }
   return header;
 };
@@ -72,7 +124,9 @@ const parseExcelData = (buffer: ArrayBuffer): Transaction[] => {
   const headerRowIndex = rawData.findIndex((row) => {
     if (!Array.isArray(row)) return false;
     return row.some((cell) => {
-      const lower = String(cell ?? "").toLowerCase().trim();
+      const lower = String(cell ?? "")
+        .toLowerCase()
+        .trim();
       return dateAliases.includes(lower);
     });
   });
@@ -86,7 +140,10 @@ const parseExcelData = (buffer: ArrayBuffer): Transaction[] => {
 
   const rows = rawData
     .slice(headerRowIndex + 1)
-    .filter((row) => Array.isArray(row) && row.some((cell) => cell != null && cell !== ""))
+    .filter(
+      (row) =>
+        Array.isArray(row) && row.some((cell) => cell != null && cell !== ""),
+    )
     .map((row) => {
       const obj: Transaction = {};
       headers.forEach((header, i) => {
@@ -99,18 +156,27 @@ const parseExcelData = (buffer: ArrayBuffer): Transaction[] => {
     .filter((tx) => tx["Огноо"]);
 
   // Хэрэв Орлого болон Зарлага олдоогүй бол "Дүн" эсвэл "Amount" баганыг шалгана
-  const hasIncome = rows.some((r) => r["Орлого"] !== "" && r["Орлого"] !== undefined);
-  const hasExpense = rows.some((r) => r["Зарлага"] !== "" && r["Зарлага"] !== undefined);
+  const hasIncome = rows.some(
+    (r) => r["Орлого"] !== "" && r["Орлого"] !== undefined,
+  );
+  const hasExpense = rows.some(
+    (r) => r["Зарлага"] !== "" && r["Зарлага"] !== undefined,
+  );
 
   if (!hasIncome && !hasExpense) {
     const amountKey = headers.find((h) =>
-      ["дүн", "amount", "дүн/amount"].includes(h.toLowerCase())
+      ["дүн", "amount", "дүн/amount"].includes(h.toLowerCase()),
     );
     if (amountKey) {
       rows.forEach((row) => {
         const amt = Number(row[amountKey]);
-        if (amt > 0) { row["Орлого"] = amt; row["Зарлага"] = ""; }
-        else if (amt < 0) { row["Зарлага"] = Math.abs(amt); row["Орлого"] = ""; }
+        if (amt > 0) {
+          row["Орлого"] = amt;
+          row["Зарлага"] = "";
+        } else if (amt < 0) {
+          row["Зарлага"] = Math.abs(amt);
+          row["Орлого"] = "";
+        }
       });
     }
   }
@@ -127,9 +193,18 @@ const getMonthKey = (dateVal: string | number): string => {
 };
 
 const MONTH_NAMES = [
-  "1-р сар", "2-р сар", "3-р сар", "4-р сар",
-  "5-р сар", "6-р сар", "7-р сар", "8-р сар",
-  "9-р сар", "10-р сар", "11-р сар", "12-р сар",
+  "1-р сар",
+  "2-р сар",
+  "3-р сар",
+  "4-р сар",
+  "5-р сар",
+  "6-р сар",
+  "7-р сар",
+  "8-р сар",
+  "9-р сар",
+  "10-р сар",
+  "11-р сар",
+  "12-р сар",
 ];
 
 const getMonthLabel = (key: string): string => {
@@ -141,9 +216,16 @@ const getMonthLabel = (key: string): string => {
 export default function FileUpload({ onResult }: FileUploadProps) {
   const { getToken } = useAuth();
   const [uploadedFiles, setUploadeddFiles] = useState<UploadedFile[]>([]);
-  const [manualTransactions, setManualTransactions] = useState<Transaction[]>([]);
+  const [manualTransactions, setManualTransactions] = useState<Transaction[]>(
+    [],
+  );
   const [showManualForm, setShowManualForm] = useState(false);
-  const [manualForm, setManualForm] = useState({ date: "", description: "", type: "expense", amount: "" });
+  const [manualForm, setManualForm] = useState({
+    date: "",
+    description: "",
+    type: "expense",
+    amount: "",
+  });
   const [aiResult, setAiResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMonths, setSelectedMonths] = useState<Set<string>>(new Set());
@@ -159,27 +241,55 @@ export default function FileUpload({ onResult }: FileUploadProps) {
     const date = new Date().toLocaleDateString("mn-MN");
 
     const catRows = (cats: { name: string; total: number }[]) =>
-      cats.map((c) => `<tr><td>${c.name}</td><td style="text-align:right">₮${c.total.toLocaleString()}</td></tr>`).join("");
+      cats
+        .map(
+          (c) =>
+            `<tr><td>${c.name}</td><td style="text-align:right">₮${c.total.toLocaleString()}</td></tr>`,
+        )
+        .join("");
 
     const monthlyRows = (aiResult.monthly ?? [])
-      .map((m: { month: string; income: { name: string; total: number }[]; expenses: { name: string; total: number }[] }) => {
-        const [year, mon] = m.month.split("-");
-        const label = `${year} оны ${MONTH_NAMES[(parseInt(mon) - 1)] ?? mon + "-р сар"}`;
-        const incTotal = (m.income ?? []).reduce((s: number, c: { total: number }) => s + c.total, 0);
-        const expTotal = (m.expenses ?? []).reduce((s: number, c: { total: number }) => s + c.total, 0);
-        return `
+      .map(
+        (m: {
+          month: string;
+          income: { name: string; total: number }[];
+          expenses: { name: string; total: number }[];
+        }) => {
+          const [year, mon] = m.month.split("-");
+          const label = `${year} оны ${MONTH_NAMES[parseInt(mon) - 1] ?? mon + "-р сар"}`;
+          const incTotal = (m.income ?? []).reduce(
+            (s: number, c: { total: number }) => s + c.total,
+            0,
+          );
+          const expTotal = (m.expenses ?? []).reduce(
+            (s: number, c: { total: number }) => s + c.total,
+            0,
+          );
+          return `
           <tr style="background:#f8fafc"><td colspan="2" style="font-weight:600;padding:8px 12px;border-top:2px solid #e2e8f0">${label}</td></tr>
           <tr><td style="padding-left:24px;color:#059669">Нийт орлого</td><td style="text-align:right;color:#059669">₮${incTotal.toLocaleString()}</td></tr>
           ${catRows(m.income ?? [])}
           <tr><td style="padding-left:24px;color:#e11d48">Нийт зарлага</td><td style="text-align:right;color:#e11d48">₮${expTotal.toLocaleString()}</td></tr>
           ${catRows(m.expenses ?? [])}`;
-      }).join("");
+        },
+      )
+      .join("");
 
     const tipsHtml = (aiResult.tips ?? [])
-      .map((t: string, i: number) => `<li style="margin-bottom:8px">${i + 1}. ${t}</li>`).join("");
+      .map(
+        (t: string, i: number) =>
+          `<li style="margin-bottom:8px">${i + 1}. ${t}</li>`,
+      )
+      .join("");
 
-    const totalIncome = (aiResult.income ?? []).reduce((s: number, c: { total: number }) => s + c.total, 0);
-    const totalExpense = (aiResult.expenses ?? []).reduce((s: number, c: { total: number }) => s + c.total, 0);
+    const totalIncome = (aiResult.income ?? []).reduce(
+      (s: number, c: { total: number }) => s + c.total,
+      0,
+    );
+    const totalExpense = (aiResult.expenses ?? []).reduce(
+      (s: number, c: { total: number }) => s + c.total,
+      0,
+    );
 
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
     <title>Санхүүгийн тайлан</title>
@@ -231,18 +341,19 @@ export default function FileUpload({ onResult }: FileUploadProps) {
 
   const allTransactions = useMemo(
     () => [...uploadedFiles.flatMap((f) => f.data), ...manualTransactions],
-    [uploadedFiles, manualTransactions]
+    [uploadedFiles, manualTransactions],
   );
 
   const addManualTransaction = () => {
-    if (!manualForm.date || !manualForm.amount || !manualForm.description) return;
+    if (!manualForm.date || !manualForm.amount || !manualForm.description)
+      return;
     const amount = Number(manualForm.amount);
     const tx: Transaction = {
-      "Огноо": manualForm.date,
+      Огноо: manualForm.date,
       "Гүйлгээний утга": manualForm.description,
-      "Орлого": manualForm.type === "income" ? amount : "",
-      "Зарлага": manualForm.type === "expense" ? amount : "",
-      "_manual": 1,
+      Орлого: manualForm.type === "income" ? amount : "",
+      Зарлага: manualForm.type === "expense" ? amount : "",
+      _manual: 1,
     };
     setManualTransactions((prev) => [...prev, tx]);
     setManualForm({ date: "", description: "", type: "expense", amount: "" });
@@ -282,8 +393,10 @@ export default function FileUpload({ onResult }: FileUploadProps) {
   // Сонгосон саруудаар шүүнэ; manual гүйлгээ үргэлж орно
   const filteredTransactions = useMemo(() => {
     if (selectedMonths.size === 0) return uniqueTransactions;
-    return uniqueTransactions.filter((tx) =>
-      tx["_manual"] === 1 || selectedMonths.has(getMonthKey(tx["Огноо"] ?? ""))
+    return uniqueTransactions.filter(
+      (tx) =>
+        tx["_manual"] === 1 ||
+        selectedMonths.has(getMonthKey(tx["Огноо"] ?? "")),
     );
   }, [uniqueTransactions, selectedMonths]);
 
@@ -311,7 +424,7 @@ export default function FileUpload({ onResult }: FileUploadProps) {
             reject(error);
           };
           reader.readAsArrayBuffer(file);
-        })
+        }),
     );
 
     try {
@@ -357,7 +470,10 @@ export default function FileUpload({ onResult }: FileUploadProps) {
       onResult?.(result);
 
       const token = await getToken();
-      const authHeader = { "Content-type": "application/json", Authorization: `Bearer ${token}` };
+      const authHeader = {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      };
 
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance/analysis`, {
         method: "POST",
@@ -369,12 +485,26 @@ export default function FileUpload({ onResult }: FileUploadProps) {
         }),
       });
 
-      const monthly: { month: string; revenue: number; expense: number; netProfit: number }[] =
+      const monthly: {
+        month: string;
+        revenue: number;
+        expense: number;
+        netProfit: number;
+      }[] =
         Array.isArray(result.monthly) && result.monthly.length > 0
           ? result.monthly
           : result.revenue != null || result.expense != null
-          ? [{ month: new Date().toISOString(), revenue: result.revenue ?? 0, expense: result.expense ?? 0, netProfit: result.netProfit ?? (result.revenue ?? 0) - (result.expense ?? 0) }]
-          : [];
+            ? [
+                {
+                  month: new Date().toISOString(),
+                  revenue: result.revenue ?? 0,
+                  expense: result.expense ?? 0,
+                  netProfit:
+                    result.netProfit ??
+                    (result.revenue ?? 0) - (result.expense ?? 0),
+                },
+              ]
+            : [];
 
       for (const m of monthly) {
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
@@ -424,10 +554,14 @@ export default function FileUpload({ onResult }: FileUploadProps) {
                   className="flex flex-row items-center justify-between p-2 border dark:border-slate-700 rounded-md w-full dark:bg-slate-800">
                   <div className="flex flex-row items-center gap-2 overflow-hidden">
                     <FileSpreadsheet className="h-4 w-4 shrink-0 dark:text-slate-300" />
-                    <span className="text-sm truncate dark:text-slate-200" title={file.name}>
+                    <span
+                      className="text-sm truncate dark:text-slate-200"
+                      title={file.name}>
                       {file.name} амжилттай нэмэгдлээ.
                     </span>
-                    <span className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full">{file.data.length} гүйлгээ</span>
+                    <span className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full">
+                      {file.data.length} гүйлгээ
+                    </span>
                   </div>
                   <Button
                     variant="ghost"
@@ -459,14 +593,18 @@ export default function FileUpload({ onResult }: FileUploadProps) {
                     <Input
                       type="date"
                       value={manualForm.date}
-                      onChange={(e) => setManualForm((f) => ({ ...f, date: e.target.value }))}
+                      onChange={(e) =>
+                        setManualForm((f) => ({ ...f, date: e.target.value }))
+                      }
                     />
                   </div>
                   <div className="space-y-1">
                     <Label>Төрөл</Label>
                     <select
                       value={manualForm.type}
-                      onChange={(e) => setManualForm((f) => ({ ...f, type: e.target.value }))}
+                      onChange={(e) =>
+                        setManualForm((f) => ({ ...f, type: e.target.value }))
+                      }
                       className="w-full border dark:border-slate-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-slate-700 dark:text-slate-200">
                       <option value="expense">Зарлага</option>
                       <option value="income">Орлого</option>
@@ -478,7 +616,12 @@ export default function FileUpload({ onResult }: FileUploadProps) {
                   <Input
                     placeholder="Гүйлгээний утга"
                     value={manualForm.description}
-                    onChange={(e) => setManualForm((f) => ({ ...f, description: e.target.value }))}
+                    onChange={(e) =>
+                      setManualForm((f) => ({
+                        ...f,
+                        description: e.target.value,
+                      }))
+                    }
                   />
                 </div>
                 <div className="space-y-1">
@@ -487,15 +630,26 @@ export default function FileUpload({ onResult }: FileUploadProps) {
                     type="number"
                     placeholder="0"
                     value={manualForm.amount}
-                    onChange={(e) => setManualForm((f) => ({ ...f, amount: e.target.value }))}
+                    onChange={(e) =>
+                      setManualForm((f) => ({ ...f, amount: e.target.value }))
+                    }
                   />
                 </div>
                 <div className="flex gap-2 justify-end">
-                  <Button variant="ghost" size="sm" onClick={() => setShowManualForm(false)}>Болих</Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowManualForm(false)}>
+                    Болих
+                  </Button>
                   <Button
                     size="sm"
                     onClick={addManualTransaction}
-                    disabled={!manualForm.date || !manualForm.amount || !manualForm.description}
+                    disabled={
+                      !manualForm.date ||
+                      !manualForm.amount ||
+                      !manualForm.description
+                    }
                     className="bg-blue-600 text-white">
                     <Plus className="h-4 w-4 mr-1" /> Нэмэх
                   </Button>
@@ -506,16 +660,26 @@ export default function FileUpload({ onResult }: FileUploadProps) {
             {manualTransactions.length > 0 && (
               <div className="space-y-1">
                 {manualTransactions.map((tx, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm border dark:border-slate-700 rounded-md px-3 py-2 bg-white dark:bg-slate-800">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between text-sm border dark:border-slate-700 rounded-md px-3 py-2 bg-white dark:bg-slate-800">
                     <div className="flex items-center gap-3">
-                      <span className="text-slate-400 dark:text-slate-500 text-xs">{String(tx["Огноо"])}</span>
-                      <span className="text-slate-700 dark:text-slate-300">{String(tx["Гүйлгээний утга"])}</span>
+                      <span className="text-slate-400 dark:text-slate-500 text-xs">
+                        {String(tx["Огноо"])}
+                      </span>
+                      <span className="text-slate-700 dark:text-slate-300">
+                        {String(tx["Гүйлгээний утга"])}
+                      </span>
                     </div>
                     <div className="flex items-center gap-3">
                       {tx["Орлого"] ? (
-                        <span className="text-emerald-600 font-medium">+₮{Number(tx["Орлого"]).toLocaleString()}</span>
+                        <span className="text-emerald-600 font-medium">
+                          +₮{Number(tx["Орлого"]).toLocaleString()}
+                        </span>
                       ) : (
-                        <span className="text-rose-600 font-medium">-₮{Number(tx["Зарлага"]).toLocaleString()}</span>
+                        <span className="text-rose-600 font-medium">
+                          -₮{Number(tx["Зарлага"]).toLocaleString()}
+                        </span>
                       )}
                       <button onClick={() => removeManualTransaction(i)}>
                         <Trash className="h-3.5 w-3.5 text-slate-400 hover:text-red-500" />
@@ -534,9 +698,14 @@ export default function FileUpload({ onResult }: FileUploadProps) {
                 className="w-full flex items-center justify-between text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-md p-3 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
-                  <span>{duplicates.length} давхардсан гүйлгээ илрэв — шинжилгээнд оруулахгүй.</span>
+                  <span>
+                    {duplicates.length} давхардсан гүйлгээ илрэв — шинжилгээнд
+                    оруулахгүй.
+                  </span>
                 </div>
-                <span className="text-xs underline">{showDuplicates ? "Хаах" : "Харах"}</span>
+                <span className="text-xs underline">
+                  {showDuplicates ? "Хаах" : "Харах"}
+                </span>
               </button>
 
               {showDuplicates && (
@@ -549,16 +718,27 @@ export default function FileUpload({ onResult }: FileUploadProps) {
                   </div>
                   <div className="max-h-80 overflow-y-auto">
                     {duplicates.map(({ original, duplicate }, i) => {
-                      const renderRow = (tx: Transaction, label: string, bg: string) => (
-                        <div className={`grid grid-cols-[90px_1fr_100px] px-3 py-2 gap-2 items-start ${bg}`}>
+                      const renderRow = (
+                        tx: Transaction,
+                        label: string,
+                        bg: string,
+                      ) => (
+                        <div
+                          className={`grid grid-cols-[90px_1fr_100px] px-3 py-2 gap-2 items-start ${bg}`}>
                           <div className="flex flex-col gap-0.5">
-                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded w-fit ${label === "Анхны" ? "bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300" : "bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400"}`}>
+                            <span
+                              className={`text-[10px] font-semibold px-1.5 py-0.5 rounded w-fit ${label === "Анхны" ? "bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300" : "bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400"}`}>
                               {label}
                             </span>
-                            <span className="text-slate-500 dark:text-slate-400">{String(tx["Огноо"]).slice(0, 10)}</span>
+                            <span className="text-slate-500 dark:text-slate-400">
+                              {String(tx["Огноо"]).slice(0, 10)}
+                            </span>
                           </div>
-                          <span className="text-slate-700 dark:text-slate-300 break-words leading-relaxed">{String(tx["Гүйлгээний утга"])}</span>
-                          <span className={`text-right font-medium ${tx["Орлого"] ? "text-emerald-600" : "text-rose-600"}`}>
+                          <span className="text-slate-700 dark:text-slate-300 break-words leading-relaxed">
+                            {String(tx["Гүйлгээний утга"])}
+                          </span>
+                          <span
+                            className={`text-right font-medium ${tx["Орлого"] ? "text-emerald-600" : "text-rose-600"}`}>
                             {tx["Орлого"]
                               ? `+₮${Number(tx["Орлого"]).toLocaleString()}`
                               : `-₮${Number(tx["Зарлага"]).toLocaleString()}`}
@@ -566,9 +746,21 @@ export default function FileUpload({ onResult }: FileUploadProps) {
                         </div>
                       );
                       return (
-                        <div key={i} className={i > 0 ? "border-t-2 border-amber-100" : ""}>
-                          {renderRow(original, "Анхны", "bg-white dark:bg-slate-800")}
-                          {renderRow(duplicate, "Давхардсан", "bg-rose-50 dark:bg-rose-900/20")}
+                        <div
+                          key={i}
+                          className={
+                            i > 0 ? "border-t-2 border-amber-100" : ""
+                          }>
+                          {renderRow(
+                            original,
+                            "Анхны",
+                            "bg-white dark:bg-slate-800",
+                          )}
+                          {renderRow(
+                            duplicate,
+                            "Давхардсан",
+                            "bg-rose-50 dark:bg-rose-900/20",
+                          )}
                         </div>
                       );
                     })}
@@ -586,10 +778,11 @@ export default function FileUpload({ onResult }: FileUploadProps) {
                   <button
                     key={month}
                     onClick={() => toggleMonth(month)}
-                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${selectedMonths.has(month)
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-blue-400"
-                      }`}>
+                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                      selectedMonths.has(month)
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-blue-400"
+                    }`}>
                     {getMonthLabel(month)}
                   </button>
                 ))}
@@ -626,131 +819,156 @@ export default function FileUpload({ onResult }: FileUploadProps) {
       </Card>
 
       {aiResult && (
-        <div ref={pdfRef} className="flex-1 flex flex-col gap-4 bg-white dark:bg-slate-900 p-2 rounded-lg self-stretch overflow-y-auto">
-            {/* Ерөнхий дүгнэлт */}
-            <Card className="w-full border-blue-100 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base text-blue-700 dark:text-blue-300">
-                  <Sparkles className="h-5 w-5" />
-                  Ерөнхий дүгнэлт
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">{aiResult.summary}</p>
-              </CardContent>
-            </Card>
+        <div
+          ref={pdfRef}
+          className="flex-1 flex flex-col gap-4 bg-white dark:bg-slate-900 p-2 rounded-lg self-stretch overflow-y-auto">
+          {/* Ерөнхий дүгнэлт */}
+          <Card className="w-full border-blue-100 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base text-blue-700 dark:text-blue-300">
+                <Sparkles className="h-5 w-5" />
+                Ерөнхий дүгнэлт
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                {aiResult.summary}
+              </p>
+            </CardContent>
+          </Card>
 
-            {/* Tab: Нийт + сар бүр */}
-            <Card className="w-full">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Sparkles className="h-4 w-4 text-blue-500" />
-                  Ангилалын задаргаа
-                </CardTitle>
-                <div className="flex flex-wrap gap-2 pt-2">
-                  <button
-                    onClick={() => setActiveTab("нийт")}
-                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${activeTab === "нийт"
+          {/* Tab: Нийт + сар бүр */}
+          <Card className="w-full">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Sparkles className="h-4 w-4 text-blue-500" />
+                Ангилалын задаргаа
+              </CardTitle>
+              <div className="flex flex-wrap gap-2 pt-2">
+                <button
+                  onClick={() => setActiveTab("нийт")}
+                  className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                    activeTab === "нийт"
                       ? "bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 border-slate-800"
                       : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-slate-500"
-                      }`}>
-                    Нийт
-                  </button>
-                  {aiResult.monthly?.map((m: { month: string }) => (
-                    <button
-                      key={m.month}
-                      onClick={() => setActiveTab(m.month)}
-                      className={`px-3 py-1 rounded-full text-sm border transition-colors ${activeTab === m.month
+                  }`}>
+                  Нийт
+                </button>
+                {aiResult.monthly?.map((m: { month: string }) => (
+                  <button
+                    key={m.month}
+                    onClick={() => setActiveTab(m.month)}
+                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                      activeTab === m.month
                         ? "bg-blue-600 text-white border-blue-600"
                         : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-blue-400"
-                        }`}>
-                      {getMonthLabel(m.month)}
-                    </button>
-                  ))}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                {(() => {
-                  const monthData = activeTab === "нийт"
-                    ? { income: aiResult.income, expenses: aiResult.expenses }
-                    : aiResult.monthly?.find((m: { month: string }) => m.month === activeTab);
-
-                  const income: { name: string; total: number }[] = monthData?.income ?? [];
-                  const expenses: { name: string; total: number }[] = monthData?.expenses ?? [];
-
-                  const maxIncome = Math.max(...income.map((c) => c.total), 1);
-                  const maxExpense = Math.max(...expenses.map((c) => c.total), 1);
-
-                  return (
-                    <>
-                      {/* Орлого */}
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-emerald-600">
-                          <TrendingUp className="h-4 w-4" />
-                          Орлого
-                        </div>
-                        {income.map((cat, i) => (
-                          <div key={i} className="space-y-1">
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-600 dark:text-slate-400">{cat.name}</span>
-                              <span className="font-semibold text-emerald-700 dark:text-emerald-400">₮{cat.total.toLocaleString()}</span>
-                            </div>
-                            <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                              <div
-                                className="h-2 rounded-full bg-emerald-400 transition-all"
-                                style={{ width: `${(cat.total / maxIncome) * 100}%` }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="border-t border-slate-100 dark:border-slate-700" />
-
-                      {/* Зарлага */}
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-rose-600">
-                          <TrendingDown className="h-4 w-4" />
-                          Зарлага
-                        </div>
-                        {expenses.map((cat, i) => (
-                          <div key={i} className="space-y-1">
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-slate-600">{cat.name}</span>
-                              <span className="font-semibold text-rose-700 dark:text-rose-400">₮{cat.total.toLocaleString()}</span>
-                            </div>
-                            <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                              <div
-                                className="h-2 rounded-full bg-rose-400 transition-all"
-                                style={{ width: `${(cat.total / maxExpense) * 100}%` }}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  );
-                })()}
-              </CardContent>
-            </Card>
-
-            {/* Зөвлөмж */}
-            <Card className="w-full">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Lightbulb className="h-5 w-5 text-yellow-500" />
-                  Зөвлөмж
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {aiResult.tips?.map((tip: string, i: number) => (
-                  <div key={i} className="flex gap-3 items-start p-2 rounded-lg bg-slate-50 dark:bg-slate-800">
-                    <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                    <span className="text-sm text-slate-700 dark:text-slate-300">{tip}</span>
-                  </div>
+                    }`}>
+                    {getMonthLabel(m.month)}
+                  </button>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {(() => {
+                const monthData =
+                  activeTab === "нийт"
+                    ? { income: aiResult.income, expenses: aiResult.expenses }
+                    : aiResult.monthly?.find(
+                        (m: { month: string }) => m.month === activeTab,
+                      );
+
+                const income: { name: string; total: number }[] =
+                  monthData?.income ?? [];
+                const expenses: { name: string; total: number }[] =
+                  monthData?.expenses ?? [];
+
+                const maxIncome = Math.max(...income.map((c) => c.total), 1);
+                const maxExpense = Math.max(...expenses.map((c) => c.total), 1);
+
+                return (
+                  <>
+                    {/* Орлого */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm font-semibold text-emerald-600">
+                        <TrendingUp className="h-4 w-4" />
+                        Орлого
+                      </div>
+                      {income.map((cat, i) => (
+                        <div key={i} className="space-y-1">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              {cat.name}
+                            </span>
+                            <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+                              ₮{cat.total.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div
+                              className="h-2 rounded-full bg-emerald-400 transition-all"
+                              style={{
+                                width: `${(cat.total / maxIncome) * 100}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="border-t border-slate-100 dark:border-slate-700" />
+
+                    {/* Зарлага */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm font-semibold text-rose-600">
+                        <TrendingDown className="h-4 w-4" />
+                        Зарлага
+                      </div>
+                      {expenses.map((cat, i) => (
+                        <div key={i} className="space-y-1">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-slate-600">{cat.name}</span>
+                            <span className="font-semibold text-rose-700 dark:text-rose-400">
+                              ₮{cat.total.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div
+                              className="h-2 rounded-full bg-rose-400 transition-all"
+                              style={{
+                                width: `${(cat.total / maxExpense) * 100}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                );
+              })()}
+            </CardContent>
+          </Card>
+
+          {/* Зөвлөмж */}
+          <Card className="w-full">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Lightbulb className="h-5 w-5 text-yellow-500" />
+                Зөвлөмж
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {aiResult.tips?.map((tip: string, i: number) => (
+                <div
+                  key={i}
+                  className="flex gap-3 items-start p-2 rounded-lg bg-slate-50 dark:bg-slate-800">
+                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                  <span className="text-sm text-slate-700 dark:text-slate-300">
+                    {tip}
+                  </span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>

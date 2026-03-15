@@ -3,7 +3,11 @@ import { useState } from "react";
 import { AISection } from "./_components/AISection";
 import { Dashboard } from "./_components/Dashboard";
 import FileUpload from "./_components/FileUpload";
+import { GraphicSection } from "./_components/GraphicSection";
 import { HeadSection } from "./_components/HeadSection";
+import FinanceForm from "./_components/FinanceForm";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export interface AiCategory {
   name: string;
@@ -26,6 +30,7 @@ export interface AiResult {
 
 export default function Finance() {
   const [aiResult, setAiResult] = useState<AiResult | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
   return (
     <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-muted/30 text-foreground">
@@ -39,9 +44,10 @@ export default function Finance() {
         </Button>
       </div>
       {showForm && <FinanceForm onClose={() => setShowForm(false)} />}
-      <FileUpload onResult={(cats) => setCategories(cats)} />
-      <Dashboard categories={categories} />
-      <AISection />
+      <FileUpload onResult={(result) => setAiResult(result)} />
+      <Dashboard categories={aiResult?.expenses ?? null} />
+      <AISection aiResult={aiResult} />
+      <GraphicSection aiResult={aiResult} />
     </div>
   );
 }
