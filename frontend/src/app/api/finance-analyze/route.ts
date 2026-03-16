@@ -2,12 +2,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json(
+        { error: "OPENAI_API_KEY тохируулагдаагүй байна." },
+        { status: 500 },
+      );
+    }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
     const body = await request.json();
     const { transactions } = body;
 
@@ -26,23 +32,35 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `Чи бол туршлагатай санхүүгийн зөвлөх. Хариуг ЗААВАЛ дараах JSON бүтцээр буцаах ёстой. Гүйлгээнүүдийг огноогоор нь сар бүрт ангилж орлого/зарлага/цэвэр ашгийг тооцоолно. Мөн нийт дүн болон зарлагын ангилал гаргана. ӨӨР ТЭКСТ БИТГИЙ БИЧ.
+          content: `Чи бол туршлагатай санхүүгийн зөвлөх. Хариуг ЗААВАЛ дараах JSON бүтцээр буцаах ёстой. Гүйлгээнүүдийг огноогоор нь сар бүрт ангилж орлого/зарлагын ангилал гаргана. ӨӨР ТЭКСТ БИТГИЙ БИЧ.
+Ангилалын дүрэм:
+- "Цалин", "Ажлын хөлс", "Tsalin", ""Ajliinhuls" зэргээс гадна "Хоол хүнс", "хоол", "lunch", "dinner", "food", "café", "coffee", "xol","hol" гэх мэт хоол хүнстэй холбоотой бүх зарлагыг "Цалин" ангилалд  оруул.
+- "Тээвэр", "bus", "taxi", "ubcab", "flight", "бензин","benzin", "tulsh", "түлш" гэх мэт тээвэртэй холбоотой бүх зарлагыг "Тээвэр" ангилалд оруул.
+- Бараа маьериалын нэр бичсэн гүйлгээнээс гадна "Бараа материал", "barag material", "baraa material", "baraa", "material", "building material", "construction material","b1" гэх мэт бараа материалтай холбоотой бүх зарлагыг "Бараа материал" ангилалд оруул.
+- "Тоног төхөөрөмж ашиглалт", "tonog tuhuurumj", "tonog", "t1", "т1" гэх мэт тоног төхөөрөмж ашиглалттай холбоотой бүх зарлагыг "Тоног төхөөрөмж ашиглалт" ангилалд оруул.
+- Бусад бүх зарлагыг "Бусад" ангилалд оруул.
+- Зээл гэсэн орлогоос бусад орлогыг "Борлуулалтын орлого" ангилалд оруул.
 {
   "summary": "Ерөнхий дүгнэлт (2-3 өгүүлбэр)",
-  "revenue": 0,
-  "expense": 0,
-  "netProfit": 0,
-  "monthly": [
-    { "month": "2025-01-01", "revenue": 0, "expense": 0, "netProfit": 0 }
+  "income": [
+    { "name": "Борлуулалтын орлого", "total": 0 },
+    { "name": "Зээл", "total": 0 }
   ],
-  "categories": [
-    { "name": "Хоол хүнс", "total": 0 },
-    { "name": "Тээвэр", "total": 0 },
-    { "name": "Бараа материал", "total": 0 },
-    { "name": "Цалин", "total": 0 },
+  "expenses": [
+    { "name": "Цалин", "code": "TS1", "total": 0 },
+    { "name": "Тээвэр", "code": "T1", "total": 0 },
+    { "name": "Бараа материал", "code": "B1", "total": 0 },
+     { "name": "Тоног төхөөрөмж ашиглалт", "code": "TT1", "total": 0 },
     { "name": "Бусад", "total": 0 }
   ],
-  "tips": ["Зөвлөгөө 1", "Зөвлөгөө 2"]
+  "monthly": [
+    {
+      "month": "2025-01",
+      "income": [{ "name": "Борлуулалтын орлого", "total": 0 }],
+      "expenses": [{ "name": "Хоол хүнс", "total": 0 }]
+    }
+  ],
+  "tips": ["Борлуулалтын орлого нэмэх зөвлөгөө", "Зардал бууруулах зөвөлгөө 2"]
 }`,
         },
         {

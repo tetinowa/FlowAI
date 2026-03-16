@@ -42,8 +42,8 @@ export const GraphicSection = ({ aiResult }: GraphicSectionProps) => {
     : PLACEHOLDER_PIE;
 
   return (
-    <div className="bg-white dark:bg-slate-900 w-full flex-1 flex flex-col lg:flex-row gap-8 lg:gap-10 p-4 md:p-5 transition-colors">
-      <div className="flex w-full lg:w-1/2 flex-col justify-between bg-white dark:bg-slate-800 p-4 md:p-6 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm transition-colors">
+    <div className="bg-background dark:bg-sidebar w-full flex-1 flex flex-col lg:flex-row gap-8 lg:gap-10 p-4 md:p-5 transition-colors">
+      <div className="flex w-full lg:w-1/2 flex-col justify-between bg-white dark:bg-sidebar-accent p-4 md:p-6 rounded-3xl border border-gray-100 dark:border-sidebar-border shadow-sm transition-colors">
         <p className="text-lg text-slate-900 dark:text-white font-bold mb-6">
           Орлого & Зарлагын график
         </p>
@@ -59,7 +59,7 @@ export const GraphicSection = ({ aiResult }: GraphicSectionProps) => {
         </ResponsiveContainer>
       </div>
 
-      <div className="flex w-full lg:w-1/2 flex-col justify-between bg-white dark:bg-slate-800 p-4 md:p-6 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm transition-colors">
+      <div className="flex w-full lg:w-1/2 flex-col justify-between bg-white dark:bg-sidebar-accent p-4 md:p-6 rounded-3xl border border-gray-100 dark:border-sidebar-border shadow-sm transition-colors">
         <p className="text-lg text-slate-900 dark:text-white font-bold mb-6">
           Зарлагын ангилал
         </p>

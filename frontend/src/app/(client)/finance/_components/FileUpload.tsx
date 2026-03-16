@@ -21,6 +21,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Dashboard } from "./Dashboard";
+import { GraphicSection } from "./GraphicSection";
 
 interface Transaction {
   [key: string]: string | number;
@@ -464,7 +466,12 @@ export default function FileUpload({ onResult }: FileUploadProps) {
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ transactions: transactionsWithMonth }),
       });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`API алдаа (${response.status}): ${text.slice(0, 200)}`);
+      }
       const result = await response.json();
+      console.log("aiResult:", result);
       setAiResult(result);
       setActiveTab("нийт");
       onResult?.(result);
@@ -507,14 +514,17 @@ export default function FileUpload({ onResult }: FileUploadProps) {
             : [];
 
       for (const m of monthly) {
+        const revenue = (m.income ?? []).reduce((s: number, c: { total: number }) => s + (c.total ?? 0), 0);
+        const expense = (m.expenses ?? []).reduce((s: number, c: { total: number }) => s + (c.total ?? 0), 0);
+        const netProfit = revenue - expense;
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
           method: "POST",
           headers: authHeader,
           body: JSON.stringify({
             month: new Date(m.month).toISOString(),
-            revenue: m.revenue ?? 0,
-            expense: m.expense ?? 0,
-            netProfit: m.netProfit ?? (m.revenue ?? 0) - (m.expense ?? 0),
+            revenue,
+            expense,
+            netProfit,
           }),
         });
       }
@@ -525,7 +535,7 @@ export default function FileUpload({ onResult }: FileUploadProps) {
     }
   };
 
-  return (
+  return (<>
     <div className="w-full flex flex-col lg:flex-row gap-6 mt-10 items-start">
       <Card className="w-full lg:w-[420px] shrink-0 self-stretch">
         <CardHeader>
@@ -972,5 +982,10 @@ export default function FileUpload({ onResult }: FileUploadProps) {
         </div>
       )}
     </div>
+      <div>
+      <Dashboard aiResult={aiResult}/>
+      <GraphicSection aiResult={aiResult}/>
+      </div>
+      </>
   );
 }
