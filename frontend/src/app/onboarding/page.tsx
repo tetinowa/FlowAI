@@ -3,10 +3,9 @@
 import Prism from "@/components/Prism";
 import { useAuth, useClerk, useUser } from "@clerk/nextjs";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function OnboardingPage() {
-
   const { getToken } = useAuth();
   const { session } = useClerk();
   const [loading, setLoading] = useState(false);
@@ -18,6 +17,12 @@ export default function OnboardingPage() {
     address: "",
   });
   const { user } = useUser();
+
+  useEffect(() => {
+    if (user?.publicMetadata.onboardingComplete) {
+      window.location.href = "/dashboard";
+    }
+  }, [user]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -49,8 +54,7 @@ export default function OnboardingPage() {
     if (res.ok) {
       await session?.reload();
       window.location.href = "/dashboard";
-    }
-    else alert(`Алдаа: ${JSON.stringify(data)}`);
+    } else alert(`Алдаа: ${JSON.stringify(data)}`);
     setLoading(false);
   }
 
