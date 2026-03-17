@@ -1,52 +1,16 @@
+"use client";
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 
-export default function FinanceForm({ onClose }: { onClose: () => void }) {
-  const { getToken } = useAuth();
-  const [form, setForm] = useState({
-    title: "",
-    amount: "",
-    type: "income",
-    category: "",
-    date: "",
-  });
-  const [saving, setSaving] = useState(false);
-
-  const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    if (!form.title || !form.amount || !form.date) return;
-    setSaving(true);
-    try {
-      const token = await getToken();
-      const isIncome = form.type === "income";
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          month: new Date(form.date).toISOString(),
-          revenue: isIncome ? Number(form.amount) : 0,
-          expense: !isIncome ? Number(form.amount) : 0,
-          netProfit: isIncome ? Number(form.amount) : -Number(form.amount),
-        }),
-      });
-      onClose();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSaving(false);
-    }
-  };
+type TransactionType = "income" | "expense";
 
 interface CategoryDetail {
   amount: string;
   note: string;
+}
+
+interface FinanceFormProps {
+  onClose: () => void;
 }
 
 const CATEGORIES = {
@@ -66,29 +30,23 @@ const CATEGORIES = {
 };
 
 export default function FinanceForm({ onClose }: FinanceFormProps) {
+  const { getToken } = useAuth();
   const [type, setType] = useState<TransactionType>("income");
-  const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-  const [categoryDetails, setCategoryDetails] = useState<
-    Record<string, CategoryDetail>
-  >({});
+  const [categoryDetails, setCategoryDetails] = useState<Record<string, CategoryDetail>>({});
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const isIncome = type === "income";
   const selectedCategories = Object.keys(categoryDetails);
 
-  // ✅ Нийт дүнг ангилалуудаас автоматаар тооцооно
   const totalAmount = Object.values(categoryDetails).reduce(
     (sum, d) => sum + (parseFloat(d.amount) || 0),
     0,
   );
 
-  const accentGradient = isIncome
-    ? "from-emerald-400 to-green-500"
-    : "from-rose-400 to-red-500";
-  const accentShadow = isIncome
-    ? "shadow-emerald-500/30"
-    : "shadow-rose-500/30";
+  const accentGradient = isIncome ? "from-emerald-400 to-green-500" : "from-rose-400 to-red-500";
+  const accentShadow = isIncome ? "shadow-emerald-500/30" : "shadow-rose-500/30";
   const focusRing = isIncome
     ? "focus:border-emerald-400/60 focus:ring-emerald-400/10 focus:bg-emerald-400/5"
     : "focus:border-rose-400/60 focus:ring-rose-400/10 focus:bg-rose-400/5";
@@ -107,15 +65,37 @@ export default function FinanceForm({ onClose }: FinanceFormProps) {
     });
   };
 
-  const updateDetail = (
-    label: string,
-    field: keyof CategoryDetail,
-    value: string,
-  ) => {
+  const updateDetail = (label: string, field: keyof CategoryDetail, value: string) => {
     setCategoryDetails((prev) => ({
       ...prev,
       [label]: { ...prev[label], [field]: value },
     }));
+  };
+
+  const handleSubmit = async () => {
+    if (totalAmount === 0 || !date) return;
+    setSaving(true);
+    try {
+      const token = await getToken();
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          month: new Date(date).toISOString(),
+          revenue: isIncome ? totalAmount : 0,
+          expense: !isIncome ? totalAmount : 0,
+          netProfit: isIncome ? totalAmount : -totalAmount,
+        }),
+      });
+      onClose();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -123,16 +103,12 @@ export default function FinanceForm({ onClose }: FinanceFormProps) {
       className="relative w-full max-w-md bg-[#13141c] rounded-3xl border border-white/[0.07] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
       style={{ animation: "slideUp 0.45s cubic-bezier(0.16,1,0.3,1) both" }}
     >
-      <div
-        className={`h-[2px] w-full bg-gradient-to-r ${accentGradient} opacity-80 flex-shrink-0`}
-      />
+      <div className={`h-[2px] w-full bg-gradient-to-r ${accentGradient} opacity-80 flex-shrink-0`} />
 
       <div className="overflow-y-auto flex-1 p-7">
         {/* Header */}
         <div className="flex items-center gap-4 mb-7">
-          <div
-            className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${accentGradient} flex items-center justify-center text-xl shadow-lg ${accentShadow} transition-all duration-500`}
-          >
+          <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${accentGradient} flex items-center justify-center text-xl shadow-lg ${accentShadow} transition-all duration-500`}>
             {isIncome ? "💰" : "💸"}
           </div>
           <div>
@@ -168,13 +144,31 @@ export default function FinanceForm({ onClose }: FinanceFormProps) {
           ))}
         </div>
 
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-60"
-            >
-              {saving ? "Хадгалж байна..." : "Хадгалах"}
-            </button>
+        {/* Categories */}
+        <div className="mb-6">
+          <label className="block text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">
+            Ангилал
+          </label>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {CATEGORIES[type].map(({ emoji, label }) => {
+              const selected = !!categoryDetails[label];
+              return (
+                <button
+                  key={label}
+                  onClick={() => toggleCategory(label)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all duration-200 ${
+                    selected
+                      ? isIncome
+                        ? "bg-emerald-400/15 border-emerald-400/40 text-emerald-300"
+                        : "bg-rose-400/15 border-rose-400/40 text-rose-300"
+                      : "bg-white/[0.04] border-white/[0.08] text-white/40 hover:text-white/60 hover:bg-white/[0.07]"
+                  }`}
+                >
+                  <span>{emoji}</span>
+                  {label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Accordion list */}
@@ -184,7 +178,6 @@ export default function FinanceForm({ onClose }: FinanceFormProps) {
                 const catInfo = CATEGORIES[type].find((c) => c.label === cat);
                 const detail = categoryDetails[cat];
                 const isExpanded = expandedCategory === cat;
-
                 return (
                   <div
                     key={cat}
@@ -194,55 +187,36 @@ export default function FinanceForm({ onClose }: FinanceFormProps) {
                         : "border-rose-400/20 bg-rose-400/[0.04]"
                     }`}
                   >
-                    {/* Accordion header */}
                     <button
-                      onClick={() =>
-                        setExpandedCategory(isExpanded ? null : cat)
-                      }
+                      onClick={() => setExpandedCategory(isExpanded ? null : cat)}
                       className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
                         <span className="text-base">{catInfo?.emoji}</span>
-                        <span
-                          className={`text-sm font-bold ${isIncome ? "text-emerald-300" : "text-rose-300"}`}
-                        >
+                        <span className={`text-sm font-bold ${isIncome ? "text-emerald-300" : "text-rose-300"}`}>
                           {cat}
                         </span>
                         {detail.amount ? (
-                          <span
-                            className={`text-xs font-black px-2 py-0.5 rounded-full ${
-                              isIncome
-                                ? "bg-emerald-400/15 text-emerald-400"
-                                : "bg-rose-400/15 text-rose-400"
-                            }`}
-                          >
+                          <span className={`text-xs font-black px-2 py-0.5 rounded-full ${isIncome ? "bg-emerald-400/15 text-emerald-400" : "bg-rose-400/15 text-rose-400"}`}>
                             ₮{parseFloat(detail.amount).toLocaleString()}
                           </span>
                         ) : (
-                          <span className="text-[11px] text-white/25 font-medium">
-                            дүн оруулаагүй
-                          </span>
+                          <span className="text-[11px] text-white/25 font-medium">дүн оруулаагүй</span>
                         )}
                       </div>
                       <div className="flex items-center gap-3">
                         <span
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleCategory(cat);
-                          }}
+                          onClick={(e) => { e.stopPropagation(); toggleCategory(cat); }}
                           className="w-5 h-5 flex items-center justify-center rounded-full text-white/20 hover:text-white/60 hover:bg-white/10 text-sm transition-all"
                         >
                           ×
                         </span>
-                        <span
-                          className={`text-white/30 text-[10px] transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
-                        >
+                        <span className={`text-white/30 text-[10px] transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}>
                           ▼
                         </span>
                       </div>
                     </button>
 
-                    {/* Accordion body */}
                     {isExpanded && (
                       <div className="px-4 pb-4 flex flex-col gap-3 border-t border-white/[0.05]">
                         <div className="pt-3">
@@ -250,17 +224,13 @@ export default function FinanceForm({ onClose }: FinanceFormProps) {
                             Дүн
                           </label>
                           <div className="relative">
-                            <span
-                              className={`absolute left-3 top-1/2 -translate-y-1/2 font-black text-sm ${isIncome ? "text-emerald-400/60" : "text-rose-400/60"}`}
-                            >
+                            <span className={`absolute left-3 top-1/2 -translate-y-1/2 font-black text-sm ${isIncome ? "text-emerald-400/60" : "text-rose-400/60"}`}>
                               ₮
                             </span>
                             <input
                               type="number"
                               value={detail.amount}
-                              onChange={(e) =>
-                                updateDetail(cat, "amount", e.target.value)
-                              }
+                              onChange={(e) => updateDetail(cat, "amount", e.target.value)}
                               placeholder="0"
                               autoFocus
                               className={`w-full bg-white/[0.05] border border-white/[0.08] rounded-xl pl-7 pr-3 py-2.5 text-sm font-bold text-[#eeeef5] outline-none ring-2 ring-transparent transition-all duration-200 ${focusRing} placeholder:text-white/15`}
@@ -274,9 +244,7 @@ export default function FinanceForm({ onClose }: FinanceFormProps) {
                           <input
                             type="text"
                             value={detail.note}
-                            onChange={(e) =>
-                              updateDetail(cat, "note", e.target.value)
-                            }
+                            onChange={(e) => updateDetail(cat, "note", e.target.value)}
                             placeholder="Нэмэлт тайлбар..."
                             className={`w-full bg-white/[0.05] border border-white/[0.08] rounded-xl px-3 py-2.5 text-sm font-semibold text-[#eeeef5] outline-none ring-2 ring-transparent transition-all duration-200 ${focusRing} placeholder:text-white/20`}
                           />
@@ -296,9 +264,7 @@ export default function FinanceForm({ onClose }: FinanceFormProps) {
             Огноо
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm opacity-40">
-              📅
-            </span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm opacity-40">📅</span>
             <input
               type="date"
               value={date}
@@ -319,10 +285,11 @@ export default function FinanceForm({ onClose }: FinanceFormProps) {
             Болих
           </button>
           <button
-            disabled={totalAmount === 0}
+            onClick={handleSubmit}
+            disabled={totalAmount === 0 || saving}
             className={`px-7 py-3 rounded-2xl text-sm font-black bg-gradient-to-r ${accentGradient} shadow-lg ${accentShadow} hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 transition-all duration-200 ${isIncome ? "text-[#041a0a]" : "text-white"} disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0`}
           >
-            Хадгалах →
+            {saving ? "Хадгалж байна..." : "Хадгалах →"}
           </button>
         </div>
       </div>

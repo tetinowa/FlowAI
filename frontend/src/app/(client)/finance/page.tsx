@@ -29,7 +29,7 @@ export interface AiResult {
 }
 
 export default function Finance() {
-  const [categories, setCategories] = useState<AiCategory[] | null>(null);
+  const [aiResult, setAiResult] = useState<AiResult | null>(null);
   const [open, setOpen] = useState(false);
 
   return (
@@ -56,10 +56,10 @@ export default function Finance() {
         </div>
       )}
 
-      <FileUpload onResult={(cats) => setCategories(cats)} />
-      <Dashboard />
-      <AISection />
-      <GraphicSection categories={categories} />
+      <FileUpload onResult={(result) => setAiResult(result)} />
+      <Dashboard aiResult={aiResult} />
+      <AISection aiResult={aiResult} />
+      <GraphicSection aiResult={aiResult} />
     </div>
   );
 }

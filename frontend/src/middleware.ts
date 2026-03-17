@@ -1,5 +1,4 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -11,17 +10,12 @@ const isPublicRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) return;
 
-  const { userId, sessionClaims } = await auth();
+  const { userId } = await auth();
 
   if (!userId) {
     return (await auth()).redirectToSignIn();
   }
 
-  const onboardingComplete = (sessionClaims?.metadata as any)
-    ?.onboardingComplete;
-  if (!onboardingComplete) {
-    return NextResponse.redirect(new URL("/onboarding", req.url));
-  }
 });
 
 export const config = {

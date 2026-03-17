@@ -3,7 +3,7 @@
 import Prism from "@/components/Prism";
 import { useAuth, useClerk, useUser } from "@clerk/nextjs";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function OnboardingPage() {
   const { getToken } = useAuth();
@@ -18,8 +18,11 @@ export default function OnboardingPage() {
   });
   const { user } = useUser();
 
+  const redirecting = useRef(false);
+
   useEffect(() => {
-    if (user?.publicMetadata.onboardingComplete) {
+    if (user?.publicMetadata.onboardingComplete && !redirecting.current) {
+      redirecting.current = true;
       session?.reload().then(() => {
         window.location.href = "/dashboard";
       });
