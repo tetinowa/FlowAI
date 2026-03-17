@@ -20,9 +20,11 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (user?.publicMetadata.onboardingComplete) {
-      window.location.href = "/dashboard";
+      session?.reload().then(() => {
+        window.location.href = "/dashboard";
+      });
     }
-  }, [user]);
+  }, [user, session]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
