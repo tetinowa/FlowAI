@@ -1,11 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "./generated"
 }
 
@@ -15,14 +9,70 @@ datasource db {
 }
 
 model Organization {
-  id          String    @id @unique
-  name        String    @default("")   // ← @default нэмэх
-  members     Client[]
-  industry    Industry
-  financeData      Finance[]
-  financeAnalyses  FinanceAnalysis[]
-  posts            Post[]
-  createdAt   DateTime  @default(now())
+  id              String            @id @unique
+  name            String            @default("")
+  industry        Industry
+  patronage       Subscription
+  createdAt       DateTime          @default(now())
+  members         Client[]
+  financeData     Finance[]
+  financeAnalyses FinanceAnalysis[]
+  posts           Post[]
+}
+
+model Client {
+  id         String           @id @unique
+  orgId      String?
+  role       MemberAccessType
+  email      String
+  firstname  String
+  lastname   String
+  profilePic String?
+  createdAt  DateTime         @default(now())
+  ofOrg      Organization?    @relation(fields: [orgId], references: [id])
+}
+
+model Finance {
+  id        String       @id @default(cuid())
+  orgId     String
+  month     DateTime?
+  balance   Int?
+  revenue   Int?
+  expense   Int?
+  netProfit Int?
+  margin    Int?
+  org       Organization @relation(fields: [orgId], references: [id])
+}
+
+model FinanceAnalysis {
+  id         String       @id @default(cuid())
+  orgId      String
+  summary    String
+  categories Json
+  monthly    Json?
+  tips       Json
+  createdAt  DateTime     @default(now())
+  org        Organization @relation(fields: [orgId], references: [id])
+}
+
+model Post {
+  id          String       @id @default(cuid())
+  orgId       String
+  title       String
+  content     String       @default("")
+  platform    String
+  reach       Int          @default(0)
+  publishedAt DateTime     @default(now())
+  org         Organization @relation(fields: [orgId], references: [id])
+}
+
+model Administrator {
+  id             String   @id @unique
+  email          String
+  username       String   @unique
+  password       String
+  createdAt      DateTime @default(now())
+  lastAccessTime DateTime @default(now())
 }
 
 enum Industry {
@@ -34,59 +84,17 @@ enum Industry {
   MANUFACTURING
 }
 
-model Client {
-  id        String           @id @unique
-  ofOrg     Organization     @relation(fields: [orgId], references: [id])
-  orgId     String
-  role      MemberAccessType
-  email     String
-  firstname String
-  lastname  String
-  createdAt DateTime         @default(now())
-}
-
 enum MemberAccessType {
   EXECUTIVE
   MANAGEMENT
   MEMBER
 }
 
-model Finance {
-  id        String       @id @default(cuid())  // ← @id болгох
-  org       Organization @relation(fields: [orgId], references: [id])
-  orgId     String                              // ← @id хасах
-  month     DateTime?                          // ← нэмэх
-  balance   Int?
-  revenue   Int?
-  expense   Int?
-  netProfit Int?
-  margin    Int?
-}
-
 enum ExpenseType {
-  БАРАА_МАТЕРИАЛ
-  ТЭЭВЭР
-  УРСГАЛ_ЗАРДАЛ
-  ЦАЛИН
+  БУСАД
 }
 
-model FinanceAnalysis {
-  id         String       @id @default(cuid())
-  org        Organization @relation(fields: [orgId], references: [id])
-  orgId      String
-  summary    String
-  categories Json
-  tips       Json
-  createdAt  DateTime     @default(now())
-}
-
-model Post {
-  id          String       @id @default(cuid())
-  org         Organization @relation(fields: [orgId], references: [id])
-  orgId       String
-  title       String
-  content     String       @default("")
-  platform    String
-  reach       Int          @default(0)
-  publishedAt DateTime     @default(now())
+enum Subscription {
+  BASIC
+  PRO
 }

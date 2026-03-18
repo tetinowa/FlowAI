@@ -17,10 +17,10 @@ export const getFinance: RequestHandler = async (req, res) => {
 
 export const saveAnalysis: RequestHandler = async (req, res) => {
   const orgId = req.clerkUserId!;
-  const { summary, categories, tips } = req.body;
+  const { summary, categories, monthly, tips } = req.body;
   try {
     const record = await prisma.financeAnalysis.create({
-      data: { orgId, summary, categories, tips },
+      data: { orgId, summary, categories, monthly: monthly ?? null, tips },
     });
     return res.status(201).json({ success: true, data: record });
   } catch (e) {
@@ -58,7 +58,6 @@ export const createFinance: RequestHandler = async (req, res) => {
 
     let record;
     if (existing) {
-      // Ижил сар байвал нийлүүлнэ
       const newRevenue = (existing.revenue ?? 0) + (revenue ?? 0);
       const newExpense = (existing.expense ?? 0) + (expense ?? 0);
       record = await prisma.finance.update({
@@ -66,13 +65,12 @@ export const createFinance: RequestHandler = async (req, res) => {
         data: {
           revenue: newRevenue,
           expense: newExpense,
-          netProfit: netProfit ?? (newRevenue - newExpense),
+          netProfit: netProfit ?? newRevenue - newExpense,
           ...(balance != null && { balance }),
           ...(margin != null && { margin }),
         },
       });
     } else {
-      // Шинэ сар бол үүсгэнэ
       record = await prisma.finance.create({
         data: {
           orgId,
@@ -80,7 +78,7 @@ export const createFinance: RequestHandler = async (req, res) => {
           balance,
           revenue,
           expense,
-          netProfit: netProfit ?? ((revenue ?? 0) - (expense ?? 0)),
+          netProfit: netProfit ?? (revenue ?? 0) - (expense ?? 0),
           margin,
         },
       });

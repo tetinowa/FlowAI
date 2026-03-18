@@ -488,6 +488,7 @@ export default function FileUpload({ onResult }: FileUploadProps) {
         body: JSON.stringify({
           summary: result.summary,
           categories: result.categories,
+          monthly: result.monthly ?? null,
           tips: result.tips,
         }),
       });
@@ -514,14 +515,34 @@ export default function FileUpload({ onResult }: FileUploadProps) {
             : [];
 
       for (const m of monthly) {
-        const revenue = (m as any).revenue ?? (m as any).income ?? 0;
-        const expense = (m as any).expense ?? (m as any).expenses ?? 0;
-        const netProfit = (m as any).netProfit ?? (revenue - expense);
+        const raw = m as any;
+        // income/expenses can be arrays (from AI) or plain numbers
+        const revenue =
+          typeof raw.revenue === "number"
+            ? raw.revenue
+            : Array.isArray(raw.income)
+              ? (raw.income as { total: number }[]).reduce((s, c) => s + (c.total ?? 0), 0)
+              : typeof raw.income === "number"
+                ? raw.income
+                : 0;
+        const expense =
+          typeof raw.expense === "number"
+            ? raw.expense
+            : Array.isArray(raw.expenses)
+              ? (raw.expenses as { total: number }[]).reduce((s, c) => s + (c.total ?? 0), 0)
+              : typeof raw.expenses === "number"
+                ? raw.expenses
+                : 0;
+        const netProfit = raw.netProfit ?? (revenue - expense);
+        // "2025-01" → "2025-01-01" so Date parses correctly
+        const monthStr = typeof raw.month === "string" && raw.month.length === 7
+          ? raw.month + "-01"
+          : raw.month;
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
           method: "POST",
           headers: authHeader,
           body: JSON.stringify({
-            month: new Date(m.month).toISOString(),
+            month: new Date(monthStr).toISOString(),
             revenue,
             expense,
             netProfit,
