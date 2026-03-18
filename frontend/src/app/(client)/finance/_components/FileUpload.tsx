@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Dashboard } from "./Dashboard";
 import { GraphicSection } from "./GraphicSection";
+import FinanceForm from "./FinanceForm";
 
 interface Transaction {
   [key: string]: string | number;
@@ -222,12 +223,12 @@ export default function FileUpload({ onResult }: FileUploadProps) {
     [],
   );
   const [showManualForm, setShowManualForm] = useState(false);
-  const [manualForm, setManualForm] = useState({
-    date: "",
-    description: "",
-    type: "expense",
-    amount: "",
-  });
+  // const [manualForm, setManualForm] = useState({
+  //   date: "",
+  //   description: "",
+  //   type: "expense",
+  //   amount: "",
+  // });
   const [aiResult, setAiResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMonths, setSelectedMonths] = useState<Set<string>>(new Set());
@@ -346,22 +347,6 @@ export default function FileUpload({ onResult }: FileUploadProps) {
     [uploadedFiles, manualTransactions],
   );
 
-  const addManualTransaction = () => {
-    if (!manualForm.date || !manualForm.amount || !manualForm.description)
-      return;
-    const amount = Number(manualForm.amount);
-    const tx: Transaction = {
-      Огноо: manualForm.date,
-      "Гүйлгээний утга": manualForm.description,
-      Орлого: manualForm.type === "income" ? amount : "",
-      Зарлага: manualForm.type === "expense" ? amount : "",
-      _manual: 1,
-    };
-    setManualTransactions((prev) => [...prev, tx]);
-    setManualForm({ date: "", description: "", type: "expense", amount: "" });
-    setShowManualForm(false);
-  };
-
   const removeManualTransaction = (index: number) => {
     setManualTransactions((prev) => prev.filter((_, i) => i !== index));
   };
@@ -468,7 +453,9 @@ export default function FileUpload({ onResult }: FileUploadProps) {
       });
       if (!response.ok) {
         const text = await response.text();
-        throw new Error(`API алдаа (${response.status}): ${text.slice(0, 200)}`);
+        throw new Error(
+          `API алдаа (${response.status}): ${text.slice(0, 200)}`,
+        );
       }
       const result = await response.json();
       console.log("aiResult:", result);
@@ -556,457 +543,386 @@ export default function FileUpload({ onResult }: FileUploadProps) {
     }
   };
 
-  return (<>
-    <div className="w-full flex flex-col lg:flex-row gap-6 mt-10 items-start">
-      <Card className="w-full lg:w-[420px] shrink-0 self-stretch">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UploadCloud className="h-6 w-6 text-zinc-700 dark:text-zinc-300" />
-            Дансны хуулга оруулах
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="statement-upload">Excel файл сонгоно уу</Label>
-            <Input
-              id="statement-upload"
-              type="file"
-              accept=".xlsx, .xls, .csv"
-              onChange={handleFileUpload}
-              multiple
-            />
-          </div>
-
-          {uploadedFiles.length > 0 && (
-            <div className="flex flex-col items-start gap-2">
-              {uploadedFiles.map((file, index) => (
-                <div
-                  key={index}
-                  className="flex flex-row items-center justify-between p-2 border dark:border-slate-700 rounded-md w-full dark:bg-slate-800">
-                  <div className="flex flex-row items-center gap-2 overflow-hidden">
-                    <FileSpreadsheet className="h-4 w-4 shrink-0 dark:text-slate-300" />
-                    <span
-                      className="text-sm truncate dark:text-slate-200"
-                      title={file.name}>
-                      {file.name} амжилттай нэмэгдлээ.
-                    </span>
-                    <span className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full">
-                      {file.data.length} гүйлгээ
-                    </span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeFile(index)}>
-                    <Trash className="h-4 w-4 text-red-500" />
-                  </Button>
-                </div>
-              ))}
+  return (
+    <>
+      <div className="w-full flex flex-col lg:flex-row gap-6 mt-10 items-start">
+        <Card className="w-full lg:w-[420px] shrink-0 self-stretch">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <UploadCloud className="h-6 w-6 text-zinc-700 dark:text-zinc-300" />
+              Дансны хуулга оруулах
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="statement-upload">Excel файл сонгоно уу</Label>
+              <Input
+                id="statement-upload"
+                type="file"
+                accept=".xlsx, .xls, .csv"
+                onChange={handleFileUpload}
+                multiple
+              />
             </div>
-          )}
 
-          {/* Бэлэн мөнгөний гүйлгээ нэмэх */}
-          <div className="space-y-3">
+            {uploadedFiles.length > 0 && (
+              <div className="flex flex-col items-start gap-2">
+                {uploadedFiles.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-row items-center justify-between p-2 border dark:border-slate-700 rounded-md w-full dark:bg-slate-800"
+                  >
+                    <div className="flex flex-row items-center gap-2 overflow-hidden">
+                      <FileSpreadsheet className="h-4 w-4 shrink-0 dark:text-slate-300" />
+                      <span
+                        className="text-sm truncate dark:text-slate-200"
+                        title={file.name}
+                      >
+                        {file.name} амжилттай нэмэгдлээ.
+                      </span>
+                      <span className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full">
+                        {file.data.length} гүйлгээ
+                      </span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeFile(index)}
+                    >
+                      <Trash className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Бэлэн мөнгөний гүйлгээ нэмэх */}
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowManualForm((v) => !v)}
-              className="flex items-center gap-2">
+              className="flex items-center gap-2"
+            >
               <PenLine className="h-4 w-4" />
               Бэлэн мөнгөний гүйлгээ нэмэх
             </Button>
 
             {showManualForm && (
-              <div className="border dark:border-slate-700 rounded-lg p-4 space-y-3 bg-slate-50 dark:bg-slate-800">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <Label>Огноо</Label>
-                    <Input
-                      type="date"
-                      value={manualForm.date}
-                      onChange={(e) =>
-                        setManualForm((f) => ({ ...f, date: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label>Төрөл</Label>
-                    <select
-                      value={manualForm.type}
-                      onChange={(e) =>
-                        setManualForm((f) => ({ ...f, type: e.target.value }))
-                      }
-                      className="w-full border dark:border-slate-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-slate-700 dark:text-slate-200">
-                      <option value="expense">Зарлага</option>
-                      <option value="income">Орлого</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <Label>Тайлбар</Label>
-                  <Input
-                    placeholder="Гүйлгээний утга"
-                    value={manualForm.description}
-                    onChange={(e) =>
-                      setManualForm((f) => ({
-                        ...f,
-                        description: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label>Дүн (₮)</Label>
-                  <Input
-                    type="number"
-                    placeholder="0"
-                    value={manualForm.amount}
-                    onChange={(e) =>
-                      setManualForm((f) => ({ ...f, amount: e.target.value }))
-                    }
-                  />
-                </div>
-                <div className="flex gap-2 justify-end">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowManualForm(false)}>
-                    Болих
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={addManualTransaction}
-                    disabled={
-                      !manualForm.date ||
-                      !manualForm.amount ||
-                      !manualForm.description
-                    }
-                    className="bg-blue-600 text-white">
-                    <Plus className="h-4 w-4 mr-1" /> Нэмэх
-                  </Button>
-                </div>
-              </div>
+              <FinanceForm
+                onClose={() => setShowManualForm(false)}
+                onAdd={({ date, type, description, amount }) => {
+                  const tx: Transaction = {
+                    Огноо: date,
+                    "Гүйлгээний утга": description,
+                    Орлого: type === "income" ? amount : "",
+                    Зарлага: type === "expense" ? amount : "",
+                    _manual: 1,
+                  };
+                  setManualTransactions((prev) => [...prev, tx]);
+                }}
+              />
             )}
 
-            {manualTransactions.length > 0 && (
-              <div className="space-y-1">
-                {manualTransactions.map((tx, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between text-sm border dark:border-slate-700 rounded-md px-3 py-2 bg-white dark:bg-slate-800">
-                    <div className="flex items-center gap-3">
-                      <span className="text-slate-400 dark:text-slate-500 text-xs">
-                        {String(tx["Огноо"])}
-                      </span>
-                      <span className="text-slate-700 dark:text-slate-300">
-                        {String(tx["Гүйлгээний утга"])}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      {tx["Орлого"] ? (
-                        <span className="text-emerald-600 font-medium">
-                          +₮{Number(tx["Орлого"]).toLocaleString()}
-                        </span>
-                      ) : (
-                        <span className="text-rose-600 font-medium">
-                          -₮{Number(tx["Зарлага"]).toLocaleString()}
-                        </span>
-                      )}
-                      <button onClick={() => removeManualTransaction(i)}>
-                        <Trash className="h-3.5 w-3.5 text-slate-400 hover:text-red-500" />
-                      </button>
-                    </div>
+            {duplicates.length > 0 && (
+              <div className="space-y-2">
+                <button
+                  onClick={() => setShowDuplicates((v) => !v)}
+                  className="w-full flex items-center justify-between text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-md p-3 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 shrink-0" />
+                    <span>
+                      {duplicates.length} давхардсан гүйлгээ илрэв — шинжилгээнд
+                      оруулахгүй.
+                    </span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {duplicates.length > 0 && (
-            <div className="space-y-2">
-              <button
-                onClick={() => setShowDuplicates((v) => !v)}
-                className="w-full flex items-center justify-between text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-md p-3 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 shrink-0" />
-                  <span>
-                    {duplicates.length} давхардсан гүйлгээ илрэв — шинжилгээнд
-                    оруулахгүй.
+                  <span className="text-xs underline">
+                    {showDuplicates ? "Хаах" : "Харах"}
                   </span>
-                </div>
-                <span className="text-xs underline">
-                  {showDuplicates ? "Хаах" : "Харах"}
-                </span>
-              </button>
+                </button>
 
-              {showDuplicates && (
-                <div className="border border-amber-200 dark:border-amber-700 rounded-md overflow-hidden text-xs">
-                  {/* Header */}
-                  <div className="grid grid-cols-[90px_1fr_100px] bg-amber-100 dark:bg-amber-900/30 px-3 py-2 font-semibold text-amber-800 dark:text-amber-300 border-b border-amber-200 dark:border-amber-700">
-                    <span>Огноо</span>
-                    <span>Гүйлгээний утга</span>
-                    <span className="text-right">Дүн</span>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto">
-                    {duplicates.map(({ original, duplicate }, i) => {
-                      const renderRow = (
-                        tx: Transaction,
-                        label: string,
-                        bg: string,
-                      ) => (
-                        <div
-                          className={`grid grid-cols-[90px_1fr_100px] px-3 py-2 gap-2 items-start ${bg}`}>
-                          <div className="flex flex-col gap-0.5">
-                            <span
-                              className={`text-[10px] font-semibold px-1.5 py-0.5 rounded w-fit ${label === "Анхны" ? "bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300" : "bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400"}`}>
-                              {label}
+                {showDuplicates && (
+                  <div className="border border-amber-200 dark:border-amber-700 rounded-md overflow-hidden text-xs">
+                    {/* Header */}
+                    <div className="grid grid-cols-[90px_1fr_100px] bg-amber-100 dark:bg-amber-900/30 px-3 py-2 font-semibold text-amber-800 dark:text-amber-300 border-b border-amber-200 dark:border-amber-700">
+                      <span>Огноо</span>
+                      <span>Гүйлгээний утга</span>
+                      <span className="text-right">Дүн</span>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {duplicates.map(({ original, duplicate }, i) => {
+                        const renderRow = (
+                          tx: Transaction,
+                          label: string,
+                          bg: string,
+                        ) => (
+                          <div
+                            className={`grid grid-cols-[90px_1fr_100px] px-3 py-2 gap-2 items-start ${bg}`}
+                          >
+                            <div className="flex flex-col gap-0.5">
+                              <span
+                                className={`text-[10px] font-semibold px-1.5 py-0.5 rounded w-fit ${label === "Анхны" ? "bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300" : "bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400"}`}
+                              >
+                                {label}
+                              </span>
+                              <span className="text-slate-500 dark:text-slate-400">
+                                {String(tx["Огноо"]).slice(0, 10)}
+                              </span>
+                            </div>
+                            <span className="text-slate-700 dark:text-slate-300 break-words leading-relaxed">
+                              {String(tx["Гүйлгээний утга"])}
                             </span>
-                            <span className="text-slate-500 dark:text-slate-400">
-                              {String(tx["Огноо"]).slice(0, 10)}
+                            <span
+                              className={`text-right font-medium ${tx["Орлого"] ? "text-emerald-600" : "text-rose-600"}`}
+                            >
+                              {tx["Орлого"]
+                                ? `+₮${Number(tx["Орлого"]).toLocaleString()}`
+                                : `-₮${Number(tx["Зарлага"]).toLocaleString()}`}
                             </span>
                           </div>
-                          <span className="text-slate-700 dark:text-slate-300 break-words leading-relaxed">
-                            {String(tx["Гүйлгээний утга"])}
-                          </span>
-                          <span
-                            className={`text-right font-medium ${tx["Орлого"] ? "text-emerald-600" : "text-rose-600"}`}>
-                            {tx["Орлого"]
-                              ? `+₮${Number(tx["Орлого"]).toLocaleString()}`
-                              : `-₮${Number(tx["Зарлага"]).toLocaleString()}`}
-                          </span>
-                        </div>
-                      );
-                      return (
-                        <div
-                          key={i}
-                          className={
-                            i > 0 ? "border-t-2 border-amber-100" : ""
-                          }>
-                          {renderRow(
-                            original,
-                            "Анхны",
-                            "bg-white dark:bg-slate-800",
-                          )}
-                          {renderRow(
-                            duplicate,
-                            "Давхардсан",
-                            "bg-rose-50 dark:bg-rose-900/20",
-                          )}
-                        </div>
-                      );
-                    })}
+                        );
+                        return (
+                          <div
+                            key={i}
+                            className={
+                              i > 0 ? "border-t-2 border-amber-100" : ""
+                            }
+                          >
+                            {renderRow(
+                              original,
+                              "Анхны",
+                              "bg-white dark:bg-slate-800",
+                            )}
+                            {renderRow(
+                              duplicate,
+                              "Давхардсан",
+                              "bg-rose-50 dark:bg-rose-900/20",
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
+                )}
+              </div>
+            )}
+
+            {availableMonths.length > 0 && (
+              <div className="space-y-2">
+                <Label>Сар шүүх (сонгоогүй бол бүгд)</Label>
+                <div className="flex flex-wrap gap-2">
+                  {availableMonths.map((month) => (
+                    <button
+                      key={month}
+                      onClick={() => toggleMonth(month)}
+                      className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                        selectedMonths.has(month)
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-blue-400"
+                      }`}
+                    >
+                      {getMonthLabel(month)}
+                    </button>
+                  ))}
                 </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {selectedMonths.size === 0
+                    ? `Нийт ${uniqueTransactions.length} гүйлгээ шинжлэгдэнэ`
+                    : `${filteredTransactions.length} гүйлгээ шинжлэгдэнэ`}
+                </p>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-2">
+              <Button
+                onClick={analyzeWithAI}
+                disabled={isLoading || filteredTransactions.length === 0}
+                variant={"outline"}
+                className="w-fit bg-blue-600 text-white"
+              >
+                {isLoading ? "Шинжилж байна..." : "AI-аар шинжлүүлэх"}
+              </Button>
+              {aiResult && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={downloadPDF}
+                  disabled={isPdfLoading}
+                  className="w-fit flex items-center gap-2 dark:border-slate-600 dark:text-slate-300"
+                >
+                  <Download className="h-4 w-4" />
+                  {isPdfLoading ? "Бэлдэж байна..." : "Тайлан татах"}
+                </Button>
               )}
             </div>
-          )}
+          </CardContent>
+        </Card>
 
-          {availableMonths.length > 0 && (
-            <div className="space-y-2">
-              <Label>Сар шүүх (сонгоогүй бол бүгд)</Label>
-              <div className="flex flex-wrap gap-2">
-                {availableMonths.map((month) => (
+        {aiResult && (
+          <div
+            ref={pdfRef}
+            className="flex-1 flex flex-col gap-4 bg-white dark:bg-slate-900 p-2 rounded-lg self-stretch overflow-y-auto"
+          >
+            {/* Ерөнхий дүгнэлт */}
+            <Card className="w-full border-blue-100 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base text-blue-700 dark:text-blue-300">
+                  <Sparkles className="h-5 w-5" />
+                  Ерөнхий дүгнэлт
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                  {aiResult.summary}
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Tab: Нийт + сар бүр */}
+            <Card className="w-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Sparkles className="h-4 w-4 text-blue-500" />
+                  Ангилалын задаргаа
+                </CardTitle>
+                <div className="flex flex-wrap gap-2 pt-2">
                   <button
-                    key={month}
-                    onClick={() => toggleMonth(month)}
+                    onClick={() => setActiveTab("нийт")}
                     className={`px-3 py-1 rounded-full text-sm border transition-colors ${
-                      selectedMonths.has(month)
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-blue-400"
-                    }`}>
-                    {getMonthLabel(month)}
+                      activeTab === "нийт"
+                        ? "bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 border-slate-800"
+                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-slate-500"
+                    }`}
+                  >
+                    Нийт
                   </button>
-                ))}
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {selectedMonths.size === 0
-                  ? `Нийт ${uniqueTransactions.length} гүйлгээ шинжлэгдэнэ`
-                  : `${filteredTransactions.length} гүйлгээ шинжлэгдэнэ`}
-              </p>
-            </div>
-          )}
-
-          <div className="flex flex-col gap-2">
-            <Button
-              onClick={analyzeWithAI}
-              disabled={isLoading || filteredTransactions.length === 0}
-              variant={"outline"}
-              className="w-fit bg-blue-600 text-white">
-              {isLoading ? "Шинжилж байна..." : "AI-аар шинжлүүлэх"}
-            </Button>
-            {aiResult && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={downloadPDF}
-                disabled={isPdfLoading}
-                className="w-fit flex items-center gap-2 dark:border-slate-600 dark:text-slate-300">
-                <Download className="h-4 w-4" />
-                {isPdfLoading ? "Бэлдэж байна..." : "Тайлан татах"}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {aiResult && (
-        <div
-          ref={pdfRef}
-          className="flex-1 flex flex-col gap-4 bg-white dark:bg-slate-900 p-2 rounded-lg self-stretch overflow-y-auto">
-          {/* Ерөнхий дүгнэлт */}
-          <Card className="w-full border-blue-100 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-base text-blue-700 dark:text-blue-300">
-                <Sparkles className="h-5 w-5" />
-                Ерөнхий дүгнэлт
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-                {aiResult.summary}
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Tab: Нийт + сар бүр */}
-          <Card className="w-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Sparkles className="h-4 w-4 text-blue-500" />
-                Ангилалын задаргаа
-              </CardTitle>
-              <div className="flex flex-wrap gap-2 pt-2">
-                <button
-                  onClick={() => setActiveTab("нийт")}
-                  className={`px-3 py-1 rounded-full text-sm border transition-colors ${
-                    activeTab === "нийт"
-                      ? "bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 border-slate-800"
-                      : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-slate-500"
-                  }`}>
-                  Нийт
-                </button>
-                {aiResult.monthly?.map((m: { month: string }) => (
-                  <button
-                    key={m.month}
-                    onClick={() => setActiveTab(m.month)}
-                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${
-                      activeTab === m.month
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-blue-400"
-                    }`}>
-                    {getMonthLabel(m.month)}
-                  </button>
-                ))}
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              {(() => {
-                const monthData =
-                  activeTab === "нийт"
-                    ? { income: aiResult.income, expenses: aiResult.expenses }
-                    : aiResult.monthly?.find(
-                        (m: { month: string }) => m.month === activeTab,
-                      );
-
-                const income: { name: string; total: number }[] =
-                  monthData?.income ?? [];
-                const expenses: { name: string; total: number }[] =
-                  monthData?.expenses ?? [];
-
-                const maxIncome = Math.max(...income.map((c) => c.total), 1);
-                const maxExpense = Math.max(...expenses.map((c) => c.total), 1);
-
-                return (
-                  <>
-                    {/* Орлого */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm font-semibold text-emerald-600">
-                        <TrendingUp className="h-4 w-4" />
-                        Орлого
-                      </div>
-                      {income.map((cat, i) => (
-                        <div key={i} className="space-y-1">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-600 dark:text-slate-400">
-                              {cat.name}
-                            </span>
-                            <span className="font-semibold text-emerald-700 dark:text-emerald-400">
-                              ₮{cat.total.toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                            <div
-                              className="h-2 rounded-full bg-emerald-400 transition-all"
-                              style={{
-                                width: `${(cat.total / maxIncome) * 100}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="border-t border-slate-100 dark:border-slate-700" />
-
-                    {/* Зарлага */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm font-semibold text-rose-600">
-                        <TrendingDown className="h-4 w-4" />
-                        Зарлага
-                      </div>
-                      {expenses.map((cat, i) => (
-                        <div key={i} className="space-y-1">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="text-slate-600">{cat.name}</span>
-                            <span className="font-semibold text-rose-700 dark:text-rose-400">
-                              ₮{cat.total.toLocaleString()}
-                            </span>
-                          </div>
-                          <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                            <div
-                              className="h-2 rounded-full bg-rose-400 transition-all"
-                              style={{
-                                width: `${(cat.total / maxExpense) * 100}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                );
-              })()}
-            </CardContent>
-          </Card>
-
-          {/* Зөвлөмж */}
-          <Card className="w-full">
-            <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Lightbulb className="h-5 w-5 text-yellow-500" />
-                Зөвлөмж
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {aiResult.tips?.map((tip: string, i: number) => (
-                <div
-                  key={i}
-                  className="flex gap-3 items-start p-2 rounded-lg bg-slate-50 dark:bg-slate-800">
-                  <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                  <span className="text-sm text-slate-700 dark:text-slate-300">
-                    {tip}
-                  </span>
+                  {aiResult.monthly?.map((m: { month: string }) => (
+                    <button
+                      key={m.month}
+                      onClick={() => setActiveTab(m.month)}
+                      className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                        activeTab === m.month
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-blue-400"
+                      }`}
+                    >
+                      {getMonthLabel(m.month)}
+                    </button>
+                  ))}
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      )}
-    </div>
-      <div>
-      <Dashboard aiResult={aiResult}/>
-      <GraphicSection aiResult={aiResult}/>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                {(() => {
+                  const monthData =
+                    activeTab === "нийт"
+                      ? { income: aiResult.income, expenses: aiResult.expenses }
+                      : aiResult.monthly?.find(
+                          (m: { month: string }) => m.month === activeTab,
+                        );
+
+                  const income: { name: string; total: number }[] =
+                    monthData?.income ?? [];
+                  const expenses: { name: string; total: number }[] =
+                    monthData?.expenses ?? [];
+
+                  const maxIncome = Math.max(...income.map((c) => c.total), 1);
+                  const maxExpense = Math.max(
+                    ...expenses.map((c) => c.total),
+                    1,
+                  );
+
+                  return (
+                    <>
+                      {/* Орлого */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-emerald-600">
+                          <TrendingUp className="h-4 w-4" />
+                          Орлого
+                        </div>
+                        {income.map((cat, i) => (
+                          <div key={i} className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-slate-600 dark:text-slate-400">
+                                {cat.name}
+                              </span>
+                              <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+                                ₮{cat.total.toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                              <div
+                                className="h-2 rounded-full bg-emerald-400 transition-all"
+                                style={{
+                                  width: `${(cat.total / maxIncome) * 100}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="border-t border-slate-100 dark:border-slate-700" />
+
+                      {/* Зарлага */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-rose-600">
+                          <TrendingDown className="h-4 w-4" />
+                          Зарлага
+                        </div>
+                        {expenses.map((cat, i) => (
+                          <div key={i} className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-slate-600">{cat.name}</span>
+                              <span className="font-semibold text-rose-700 dark:text-rose-400">
+                                ₮{cat.total.toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                              <div
+                                className="h-2 rounded-full bg-rose-400 transition-all"
+                                style={{
+                                  width: `${(cat.total / maxExpense) * 100}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  );
+                })()}
+              </CardContent>
+            </Card>
+
+            {/* Зөвлөмж */}
+            <Card className="w-full">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Lightbulb className="h-5 w-5 text-yellow-500" />
+                  Зөвлөмж
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {aiResult.tips?.map((tip: string, i: number) => (
+                  <div
+                    key={i}
+                    className="flex gap-3 items-start p-2 rounded-lg bg-slate-50 dark:bg-slate-800"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                    <span className="text-sm text-slate-700 dark:text-slate-300">
+                      {tip}
+                    </span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
-      </>
+      <div>
+        <Dashboard aiResult={aiResult} />
+        <GraphicSection aiResult={aiResult} />
+      </div>
+    </>
   );
 }

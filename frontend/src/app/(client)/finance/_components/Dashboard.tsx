@@ -1,19 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
+import { useState } from "react";
 import { RevenueCard } from "./RevenueCard";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
 
 interface FinanceRecord {
   revenue: number;
@@ -45,8 +32,6 @@ const MONTH_NAMES = [
 ];
 
 export const Dashboard = ({ aiResult }: { aiResult?: any }) => {
-  const { getToken } = useAuth();
-  const [records, setRecords] = useState<FinanceRecord[]>([]);
   const [revenue, setRevenue] = useState(0);
   const [expense, setExpense] = useState(0);
 
@@ -156,7 +141,6 @@ export const Dashboard = ({ aiResult }: { aiResult?: any }) => {
 
   return (
     <div className="bg-background dark:bg-sidebar w-full flex flex-col gap-6 p-4 md:p-5 transition-colors">
-      {/* Revenue cards */}
       <div className="flex flex-row gap-4 md:gap-10 flex-wrap">
         {cards.map((item) => (
           <RevenueCard

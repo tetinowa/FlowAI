@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/onboarding(.*)",
+  "/api/finance-analyze",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -15,7 +16,6 @@ export default clerkMiddleware(async (auth, req) => {
   if (!userId) {
     return (await auth()).redirectToSignIn();
   }
-
 });
 
 export const config = {

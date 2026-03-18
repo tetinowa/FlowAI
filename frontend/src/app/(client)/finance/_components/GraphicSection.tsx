@@ -70,7 +70,8 @@ export const GraphicSection = ({ aiResult }: GraphicSectionProps) => {
         <ResponsiveContainer width="100%" height={350}>
           <BarChart
             data={barData}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+          >
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="#cbd5e1"
@@ -116,7 +117,8 @@ export const GraphicSection = ({ aiResult }: GraphicSectionProps) => {
               label={({ name, percent }) =>
                 `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
               }
-              labelLine={false}>
+              labelLine={false}
+            >
               {pieData.map((item, index) => (
                 <Cell
                   key={`cell-${item.id}`}
@@ -127,23 +129,6 @@ export const GraphicSection = ({ aiResult }: GraphicSectionProps) => {
             <Tooltip formatter={(v) => `₮${Number(v).toLocaleString()}`} />
           </PieChart>
         </ResponsiveContainer>
-        {aiResult?.expenses && (
-          <div className="flex flex-wrap gap-3 mt-2">
-            {aiResult.expenses
-              .filter((c) => c.total > 0)
-              .map((c, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-1.5 text-sm text-slate-600">
-                  <span
-                    className="w-3 h-3 rounded-full shrink-0"
-                    style={{ background: Colors[i % Colors.length] }}
-                  />
-                  {c.name}
-                </div>
-              ))}
-          </div>
-        )}
       </div>
     </div>
   );
