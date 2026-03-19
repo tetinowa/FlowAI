@@ -45,11 +45,14 @@ export const FinanceReport = ({
 
   const COLORS = [
     "#6366f1",
-    "#c7d2fe",
-    "#ec4899",
+    "#10b981",
+    "#f59e0b",
     "#f43f5e",
+    "#8b5cf6",
+    "#06b6d4",
+    "#ec4899",
+    "#84cc16",
     "#f97316",
-    "#94a3b8",
   ];
 
   const monthlyGroups = useMemo(() => {
@@ -134,16 +137,17 @@ export const FinanceReport = ({
     },
   ];
   return (
-    <div className=" min-h-screen bg-slate-50 p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div className="font-semibold text-lg">FlowAI Тайлан</div>
+    <div className="bg-slate-50 dark:bg-slate-900 px-2 py-6 md:p-8 rounded-2xl">
+      <div className="flex items-center justify-between mb-6">
+        <div className="font-bold text-lg text-slate-800 dark:text-slate-100">FlowAI Тайлан</div>
+        <span className="text-xs text-slate-400">{new Date().toLocaleDateString("mn-MN")}</span>
       </div>
 
-      <Card className="max-w-8xl mx-auto shadow-lg ">
-        <CardContent className="  ">
-          <div className="flex flex-row justify-start mb-10 px-5 text-sm text-gray-500 space-y-2 gap-2">
+      <Card className="max-w-8xl mx-auto shadow-md rounded-2xl border border-slate-100 dark:border-slate-700">
+        <CardContent className="p-4 md:p-6">
+          <div className="flex flex-row justify-start mb-6 text-sm text-gray-500 gap-2">
             <p>Үүсгэсэн огноо:</p>
-            <p className="font-semibold text-black">
+            <p className="font-semibold text-slate-800 dark:text-slate-200">
               {new Date().toLocaleDateString("mn-MN")}
             </p>
           </div>
@@ -194,26 +198,38 @@ export const FinanceReport = ({
             </div>
 
             {/* Баруун тал — PieChart */}
-            <div className="flex items-center justify-center">
-              <ResponsiveContainer width={200} height={200}>
+            <div className="flex flex-col items-center justify-center">
+              <ResponsiveContainer width="100%" height={260}>
                 <PieChart>
                   <Pie
                     data={expenseData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
+                    innerRadius={70}
+                    outerRadius={110}
                     dataKey="value"
+                    paddingAngle={2}
+                    stroke="none"
                   >
                     {expenseData.map((_: any, i: number) => (
                       <Cell key={i} fill={COLORS[i % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(val: any) => `₮${val.toLocaleString()}`}
+                    formatter={(val: any, name: any) => [`₮${Number(val).toLocaleString()}`, name]}
+                    contentStyle={{ borderRadius: "10px", fontSize: "12px" }}
                   />
                 </PieChart>
               </ResponsiveContainer>
+              {/* Legend */}
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-1 justify-center">
+                {expenseData.map((cat: any, i: number) => (
+                  <div key={i} className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: COLORS[i % COLORS.length] }} />
+                    {cat.name}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -253,87 +269,94 @@ export const FinanceReport = ({
                 Гүйлгээ байхгүй байна.
               </p>
             ) : (
-              <table className="w-full text-sm">
-                <thead className="bg-gray-100 text-gray-500">
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-2">Огноо</th>
-                    <th className="text-left px-2">Гүйлгээний утга</th>
-                    <th className="text-right px-2">Орлого</th>
-                    <th className="text-right px-2">Зарлага</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(showAll
-                    ? currentTransactions
-                    : currentTransactions.slice(0, 5)
-                  ).map((tx, i) => (
-                    <tr key={i} className="border-b">
-                      <td className="py-2 px-2">{tx.date}</td>
-                      <td className="px-2">{tx.description}</td>
-                      <td className="text-green-600 text-right px-2">
-                        {tx.type === "income"
-                          ? `₮${tx.amount.toLocaleString()}`
-                          : ""}
-                      </td>
-                      <td className="text-red-500 text-right px-2">
-                        {tx.type === "expense"
-                          ? `₮${tx.amount.toLocaleString()}`
-                          : ""}
-                      </td>
+              <div className="rounded-xl overflow-hidden border border-gray-100 dark:border-slate-700 mt-3">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-gray-50 dark:bg-slate-800 text-gray-500 dark:text-slate-400 text-xs uppercase tracking-wide">
+                      <th className="text-left py-3 px-3 font-semibold">Огноо</th>
+                      <th className="text-left px-3 font-semibold">Гүйлгээний утга</th>
+                      <th className="text-right px-3 font-semibold">Орлого</th>
+                      <th className="text-right px-3 font-semibold">Зарлага</th>
                     </tr>
-                  ))}
-                </tbody>
-                {currentTransactions.length > 5 && (
-                  <tfoot>
+                  </thead>
+                  <tbody>
+                    {(showAll
+                      ? currentTransactions
+                      : currentTransactions.slice(0, 10)
+                    ).map((tx, i) => (
+                      <tr
+                        key={i}
+                        className={`border-t border-gray-50 dark:border-slate-700/50 transition-colors ${
+                          tx.type === "income"
+                            ? "bg-emerald-50/60 dark:bg-emerald-900/10 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                            : "bg-red-50/40 dark:bg-red-900/10 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        }`}
+                      >
+                        <td className="py-2.5 px-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                          {tx.date?.slice(0, 10)}
+                        </td>
+                        <td className="px-3 text-slate-700 dark:text-slate-300 max-w-[200px] truncate">
+                          {tx.description}
+                        </td>
+                        <td className="text-right px-3 font-semibold text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+                          {tx.type === "income" ? `+₮${tx.amount.toLocaleString()}` : ""}
+                        </td>
+                        <td className="text-right px-3 font-semibold text-red-500 dark:text-red-400 whitespace-nowrap">
+                          {tx.type === "expense" ? `-₮${tx.amount.toLocaleString()}` : ""}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  {currentTransactions.length > 10 && (
+                    <tbody>
+                      <tr>
+                        <td colSpan={4} className="text-center py-3 bg-white dark:bg-slate-800">
+                          <button
+                            onClick={() => setShowAll(!showAll)}
+                            className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 text-sm font-medium"
+                          >
+                            {showAll
+                              ? "Хураах ▲"
+                              : `Бүгдийг харах (${currentTransactions.length} гүйлгээ) ▼`}
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  )}
+                  <tfoot className="bg-gray-50 dark:bg-slate-800 font-semibold border-t-2 border-gray-100 dark:border-slate-700">
                     <tr>
-                      <td colSpan={5} className="text-center py-3">
-                        <button
-                          onClick={() => setShowAll(!showAll)}
-                          className="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center justify-center gap-1 mx-auto"
-                        >
-                          {showAll
-                            ? "Хураах ▲"
-                            : `Бүгдийг харах (${currentTransactions.length - 10} гүйлгээ) ▼`}
-                        </button>
+                      <td className="py-3 px-3 text-slate-700 dark:text-slate-200" colSpan={2}>
+                        Нийт ({currentTransactions.length} гүйлгээ)
+                      </td>
+                      <td className="text-emerald-600 dark:text-emerald-400 text-right px-3">
+                        +₮{currentTransactions
+                          .filter((t) => t.type === "income")
+                          .reduce((s, t) => s + t.amount, 0)
+                          .toLocaleString()}
+                      </td>
+                      <td className="text-red-500 dark:text-red-400 text-right px-3">
+                        -₮{currentTransactions
+                          .filter((t) => t.type === "expense")
+                          .reduce((s, t) => s + t.amount, 0)
+                          .toLocaleString()}
                       </td>
                     </tr>
                   </tfoot>
-                )}
-                <tfoot className="bg-gray-100 font-semibold">
-                  <tr>
-                    <td className="py-3 px-2" colSpan={2}>
-                      Нийт
-                    </td>
-                    <td className="text-green-600 text-right px-2">
-                      ₮
-                      {currentTransactions
-                        .filter((t) => t.type === "income")
-                        .reduce((s, t) => s + t.amount, 0)
-                        .toLocaleString()}
-                    </td>
-                    <td className="text-red-500 text-right px-2">
-                      ₮
-                      {currentTransactions
-                        .filter((t) => t.type === "expense")
-                        .reduce((s, t) => s + t.amount, 0)
-                        .toLocaleString()}
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
+                </table>
+              </div>
             )}
           </div>
         </CardContent>
       </Card>
-      <Card className="w-full border-blue-100 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
+      <Card className="w-full mt-4 border-indigo-100 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-950/40 shadow-sm rounded-2xl">
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base text-blue-700 dark:text-blue-300">
+          <CardTitle className="flex items-center gap-2 text-base text-indigo-700 dark:text-indigo-300">
             <Sparkles className="h-5 w-5" />
             Ерөнхий дүгнэлт
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+          <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm">
             {aiResult?.summary ??
               "AI шинжилгээ хийснээр энд дүгнэлт харагдана."}
           </p>

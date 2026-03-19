@@ -18,7 +18,6 @@ import {
   Download,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Dashboard } from "./Dashboard";
@@ -230,7 +229,9 @@ export default function FileUpload({ onResult }: FileUploadProps) {
   const [activeTab, setActiveTab] = useState<string>("нийт");
   const [showDuplicates, setShowDuplicates] = useState(false);
   const [isPdfLoading, setIsPdfLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const pdfRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [monthIndex, setMonthIndex] = useState(-1);
 
   const downloadPDF = () => {
@@ -383,11 +384,8 @@ export default function FileUpload({ onResult }: FileUploadProps) {
     );
   }, [uniqueTransactions, selectedMonths]);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const filesList = e.target.files;
-    if (!filesList || filesList.length === 0) return;
-
-    const files = Array.from(filesList);
+  const processFiles = async (files: File[]) => {
+    if (files.length === 0) return;
     const readFilesPromises = files.map(
       (file) =>
         new Promise<UploadedFile>((resolve, reject) => {
@@ -409,14 +407,38 @@ export default function FileUpload({ onResult }: FileUploadProps) {
           reader.readAsArrayBuffer(file);
         }),
     );
-
     try {
       const parsedFiles = await Promise.all(readFilesPromises);
       setUploadeddFiles((prev) => [...prev, ...parsedFiles]);
     } catch (error) {
       console.error("Өгөгдлүүдийг нэгтгэх үед алдаа гарлаа.", error);
     }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const filesList = e.target.files;
+    if (!filesList || filesList.length === 0) return;
+    await processFiles(Array.from(filesList));
     e.target.value = "";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files).filter((f) =>
+      [".xlsx", ".xls", ".csv"].some((ext) => f.name.toLowerCase().endsWith(ext)),
+    );
+    await processFiles(files);
   };
 
   const removeFile = (indexToRemove: number) => {
@@ -584,7 +606,7 @@ export default function FileUpload({ onResult }: FileUploadProps) {
   return (
     <>
       <div className="w-full flex flex-col lg:flex-row gap-6 mt-10 items-start">
-        <Card className="w-full  shrink-0 self-stretch">
+        <Card className="w-full shrink-0 self-stretch shadow-sm rounded-2xl border-slate-100 dark:border-slate-700">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UploadCloud className="h-6 w-6 text-zinc-700 dark:text-zinc-300" />
@@ -592,14 +614,43 @@ export default function FileUpload({ onResult }: FileUploadProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="statement-upload">Excel файл сонгоно уу</Label>
-              <Input
-                id="statement-upload"
+            {/* Drag & drop upload zone */}
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`flex flex-col items-center justify-center gap-3 w-full rounded-2xl border-2 border-dashed cursor-pointer transition-all py-10 px-6 text-center
+                ${isDragging
+                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                  : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10"
+                }`}
+            >
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isDragging ? "bg-blue-100 dark:bg-blue-800" : "bg-slate-100 dark:bg-slate-700"}`}>
+                <UploadCloud className={`w-7 h-7 transition-colors ${isDragging ? "text-blue-500" : "text-slate-400 dark:text-slate-400"}`} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                  {isDragging ? "Файлыг энд тавина уу" : "Файлаа энд чирж тавь эсвэл сонго"}
+                </p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                  Excel (.xlsx, .xls) болон CSV файл дэмжинэ
+                </p>
+              </div>
+              <button
+                type="button"
+                className="mt-1 px-5 py-2 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm"
+                onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+              >
+                Файл сонгох
+              </button>
+              <input
+                ref={fileInputRef}
                 type="file"
-                accept=".xlsx, .xls, .csv"
-                onChange={handleFileUpload}
+                accept=".xlsx,.xls,.csv"
                 multiple
+                className="hidden"
+                onChange={handleFileUpload}
               />
             </div>
 
