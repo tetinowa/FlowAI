@@ -1,9 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
 
-const connectionString = `${process.env.DATABASE_PUBLIC_URL}`;
+const prisma = new PrismaClient();
 
-const adapter = new PrismaPg({ connectionString });
-export const prisma = new PrismaClient({ adapter });
-
+export { prisma };
 export default prisma;
