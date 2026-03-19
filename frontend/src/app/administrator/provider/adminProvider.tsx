@@ -8,7 +8,7 @@ import {
   loginAdmin,
   deleteCompany,
 } from "@/lib/adminApi";
-export const AdminContext = createContext(null);
+export const AdminContext = createContext<any>(null);
 interface AdminContextType {
   login: () => Promise<void>;
   lastAccessTime: Date;
