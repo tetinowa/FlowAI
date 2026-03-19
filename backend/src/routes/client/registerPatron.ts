@@ -6,7 +6,6 @@ import { clerkClient } from "../../lib/clerkClient";
 export const registerPatron: RequestHandler = async (req, res) => {
   try {
     const clerkId = req.clerkUserId;
-    const data = req.body;
 
     if (!clerkId) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -16,10 +15,7 @@ export const registerPatron: RequestHandler = async (req, res) => {
       where: { id: clerkId },
     });
     if (existingUser) {
-      await clerkClient.users.updateUser(clerkId, {
-        publicMetadata: { onboardingComplete: true },
-      });
-      return res.status(200).json({ success: true, data: existingUser });
+      return res.status(403).json({ message: "user already registered" });
     }
 
     const result = await prisma.$transaction(async (tx: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'>) => {

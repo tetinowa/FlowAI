@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import ChatBubble from "./_components/ChatBubble";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

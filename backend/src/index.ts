@@ -8,6 +8,10 @@ import { getFinance, createFinance, saveAnalysis, getAnalyses } from "./routes/f
 import { getPosts, createPost, updatePost, deletePost, getPendingPosts, markPublished, requireApiKey, publishNow } from "./routes/posts";
 import { getMarketingStrategy, saveMarketingStrategy } from "./routes/marketing";
 import { Chat } from "./routes/ai/chat";
+import { getCompanyData, getUsersData, adminAccess } from "./routes/admin";
+import { AdminAuth } from "./middleware/adminAuth";
+import { registerOrganization } from "./routes/client/regitserOrganization";
+
 import { getCompany, updateCompany } from "./routes/company/updateOrganization";
 import { getBillingStatus, createCheckout, stripeWebhook, createPortal } from "./routes/billing";
 
@@ -26,12 +30,22 @@ app.get("/health", (_req, res) => res.json({ ok: true }));
 app.post("/api/chat", Chat);
 
 app.use(clerkMiddleware());
-
+//onboarding routes
 app.post("/api/onboarding", requireAuth, registerPatron);
+app.post("/api/onboarding/member", requireAuth, registerMember);
+app.get("/api/onboarding/getcode", requireAuth, getCodeForMember);
+app.post("/api/onboarding/org", requireAuth, registerOrganization);
+//org executive personnel routes
+app.get("/api/company/members", requireAuth, getMembersInfo);
+app.delete("api/company/members", requireAuth, DeleteMember);
+app.post("/api/company/members", requireAuth, UpdateMember);
+//finance routes
+
 app.get("/api/finance", requireAuth, getFinance);
 app.post("/api/finance", requireAuth, createFinance);
 app.get("/api/finance/analysis", requireAuth, getAnalyses);
 app.post("/api/finance/analysis", requireAuth, saveAnalysis);
+//automation marketin routes?
 app.get("/api/posts", requireAuth, getPosts);
 app.post("/api/posts", requireAuth, createPost);
 app.put("/api/posts/:id", requireAuth, updatePost);
@@ -47,6 +61,9 @@ app.get("/api/billing/status", requireAuth, getBillingStatus);
 app.post("/api/billing/checkout", requireAuth, createCheckout);
 app.post("/api/billing/portal", requireAuth, createPortal);
 
+app.post("/api/admin", adminAccess);
+app.get("/api/admin/companies", AdminAuth, getCompanyData);
+app.get("/api/admin/clients", AdminAuth, getUsersData);
 
 const PORT = process.env.PORT || 8888;
 app.listen(PORT, () => {

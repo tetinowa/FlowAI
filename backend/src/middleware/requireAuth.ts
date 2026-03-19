@@ -1,4 +1,4 @@
-import { getAuth } from "@clerk/express";
+import { clerkClient, getAuth } from "@clerk/express";
 import type { Request, Response, NextFunction } from "express";
 
 declare global {
@@ -17,5 +17,6 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
 
   req.clerkUserId = userId;
+
   next();
 }

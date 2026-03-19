@@ -3,3 +3,4 @@
 /dist
 src/prisma/generated
 .clerk
+backend/src/prisma

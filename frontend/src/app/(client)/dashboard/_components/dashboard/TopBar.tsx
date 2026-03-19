@@ -30,7 +30,8 @@ export function TopBar() {
           variant="ghost"
           size="icon"
           className="relative text-muted-foreground"
-          aria-label="Мэдэгдэлүүд">
+          aria-label="Мэдэгдэлүүд"
+        >
           <Bell className="w-5 h-5" />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-background" />
         </Button>
@@ -38,7 +39,8 @@ export function TopBar() {
           variant="ghost"
           size="icon"
           className="text-muted-foreground"
-          aria-label="Тусламж">
+          aria-label="Тусламж"
+        >
           <HelpCircle className="w-5 h-5" />
         </Button>
         <Button
@@ -50,7 +52,8 @@ export function TopBar() {
               ? "Цайвар горим руу шилжих"
               : "Харанхуй горим руу шилжих"
           }
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
           <Sun className="w-5 h-5 dark:hidden" />
           <Moon className="w-5 h-5 hidden dark:block" />
         </Button>
