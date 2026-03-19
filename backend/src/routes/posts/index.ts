@@ -33,7 +33,7 @@ export const getPendingPosts: RequestHandler = async (req, res) => {
 
 // POST /api/facebook/posts/:id/publish  — n8n Facebook-д нийтэлсний дараа дуудна
 export const markPublished: RequestHandler = async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   try {
     const post = await prisma.post.update({
       where: { id },
