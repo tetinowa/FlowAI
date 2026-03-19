@@ -12,6 +12,7 @@ import {
   CreditCard,
   Receipt,
 } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 import {
   Sidebar,
   SidebarContent,
@@ -36,6 +37,9 @@ const navItems = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
+  const fullName = user ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() : "";
+  const planName = (user?.publicMetadata?.plan as string) ?? "";
 
   return (
     <Sidebar>
@@ -84,17 +88,21 @@ export function AppSidebar() {
 
       <SidebarFooter className="p-4">
         <div className="flex items-center gap-3 p-2">
-          <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden">
-            <img
-              src="https://i.pravatar.cc/32?img=47"
-              alt="Avatar"
-              className="w-full h-full object-cover"
-            />
+          <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-[#5048e5] flex items-center justify-center text-white text-xs font-bold">
+            {user?.imageUrl ? (
+              <img
+                src={user.imageUrl}
+                alt="Avatar"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span>{(user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0] ?? "?").toUpperCase()}</span>
+            )}
           </div>
           <div className="flex flex-col overflow-hidden">
-            <p className="text-xs font-bold truncate">Алекс Морган</p>
+            <p className="text-xs font-bold truncate">{fullName || user?.emailAddresses?.[0]?.emailAddress}</p>
             <p className="text-[10px] text-sidebar-foreground/50 truncate">
-              Про Данс
+              {planName || user?.emailAddresses?.[0]?.emailAddress}
             </p>
           </div>
         </div>

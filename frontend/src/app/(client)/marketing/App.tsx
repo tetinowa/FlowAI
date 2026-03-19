@@ -71,7 +71,7 @@ export default function MarketingApp() {
 
   return (
     <div
-      className="flex h-screen bg-gray-100 overflow-hidden"
+      className="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
       <style>{`
@@ -94,7 +94,7 @@ export default function MarketingApp() {
       )}
 
       {/* Left form panel */}
-      <div className="w-[280px] min-w-[280px] bg-white border-r border-gray-200 flex flex-col overflow-hidden">
+      <div className="w-[280px] min-w-[280px] bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
         <ContentForm
           onContentGenerated={handleContentGenerated}
           onSchedule={handleSchedule}

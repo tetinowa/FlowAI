@@ -109,12 +109,12 @@ export default function ContentForm({
   };
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto bg-white">
+    <div className="flex flex-col h-full overflow-y-auto bg-white dark:bg-gray-900">
       <div className="px-5 pt-6 pb-2">
-        <h1 className="text-[18px] font-bold text-gray-900 leading-tight">
+        <h1 className="text-[18px] font-bold text-gray-900 dark:text-white leading-tight">
           Стратеги боловсруулах
         </h1>
-        <p className="text-[11px] text-gray-500 mt-1 leading-relaxed">
+        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
           Манай AI-д өөрийн бүтээгдэхүүний мэдээллийг өгч 30 хоногийн контент
           төлөвлөгөөг гаргаарай.
         </p>
@@ -123,20 +123,20 @@ export default function ContentForm({
       <div className="px-5 py-4 space-y-4 flex-1">
         {/* Product name */}
         <div>
-          <label className="block text-[11px] font-semibold text-gray-700 mb-1.5">
+          <label className="block text-[11px] font-semibold text-gray-700 dark:text-gray-200 mb-1.5">
             Бүтээгдэхүүний нэр
           </label>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="ж.нь: CloudSync Pro"
-            className="w-full px-3 py-2.5 text-[13px] border border-gray-200 rounded-xl bg-gray-50 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent"
+            className="w-full px-3 py-2.5 text-[13px] border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 placeholder-gray-300 dark:placeholder-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#5048e5]/30 focus:border-transparent"
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-[11px] font-semibold text-gray-700 mb-1.5">
+          <label className="block text-[11px] font-semibold text-gray-700 dark:text-gray-200 mb-1.5">
             Бүтээгдэхүүний тайлбар
           </label>
           <textarea
@@ -144,21 +144,21 @@ export default function ContentForm({
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
             placeholder="Ямар асуудлыг шийддэг вэ?"
-            className="w-full px-3 py-2.5 text-[13px] border border-gray-200 rounded-xl bg-gray-50 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent"
+            className="w-full px-3 py-2.5 text-[13px] border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 placeholder-gray-300 dark:placeholder-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#5048e5]/30 focus:border-transparent"
             style={{ resize: "none" }}
           />
         </div>
 
         {/* Target audience */}
         <div>
-          <label className="block text-[11px] font-semibold text-gray-700 mb-1.5">
+          <label className="block text-[11px] font-semibold text-gray-700 dark:text-gray-200 mb-1.5">
             Зорилтот хэрэглэгч
           </label>
           <input
             value={audience}
             onChange={(e) => setAudience(e.target.value)}
             placeholder="ж.нь: Стартап үүсгэн байгуулагчид, SaaS хэ..."
-            className="w-full px-3 py-2.5 text-[13px] border border-gray-200 rounded-xl bg-gray-50 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent"
+            className="w-full px-3 py-2.5 text-[13px] border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 placeholder-gray-300 dark:placeholder-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#5048e5]/30 focus:border-transparent"
           />
         </div>
 
@@ -170,7 +170,7 @@ export default function ContentForm({
           disabled={loading}
           className="w-full py-3 rounded-xl text-[13px] font-bold text-white flex items-center justify-center gap-2 transition-all disabled:opacity-60"
           style={{
-            background: "linear-gradient(135deg, #7C3AED 0%, #6366f1 100%)",
+            background: "#5048e5",
           }}
         >
           {loading ? (
@@ -190,8 +190,8 @@ export default function ContentForm({
 
         {/* Schedule panel */}
         {generatedPreview && (
-          <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-3">
-            <p className="text-[11px] font-bold text-gray-600">
+          <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-gray-50 dark:bg-gray-800 space-y-3">
+            <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300">
               📅 Хуанлид нэмэх
             </p>
             <div className="flex items-center gap-2">
@@ -199,13 +199,13 @@ export default function ContentForm({
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="text-[12px] px-2 py-1.5 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-indigo-300"
+                className="text-[12px] px-2 py-1.5 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#5048e5]/30"
               />
               <label className="flex items-center gap-1.5 cursor-pointer ml-auto">
-                <span className="text-[11px] text-gray-500">Авто</span>
+                <span className="text-[11px] text-gray-500 dark:text-gray-400">Авто</span>
                 <div
                   onClick={() => setAutoPost(!autoPost)}
-                  className={`relative w-8 h-4 rounded-full transition-colors cursor-pointer ${autoPost ? "bg-indigo-500" : "bg-gray-300"}`}
+                  className={`relative w-8 h-4 rounded-full transition-colors cursor-pointer ${autoPost ? "bg-[#5048e5]" : "bg-gray-300 dark:bg-gray-600"}`}
                 >
                   <div
                     className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-transform ${autoPost ? "translate-x-4" : "translate-x-0.5"}`}
@@ -215,7 +215,7 @@ export default function ContentForm({
             </div>
             <button
               onClick={() => onSchedule(generatedPreview, time, autoPost)}
-              className="w-full py-2 rounded-lg text-[12px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+              className="w-full py-2 rounded-lg text-[12px] font-bold text-white bg-[#5048e5] hover:bg-[#4038d4] transition-colors"
             >
               Хуанлид нэмэх →
             </button>

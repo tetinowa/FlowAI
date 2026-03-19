@@ -54,16 +54,16 @@ export default function Calendar({
     y === today.getFullYear();
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-2xl border border-gray-200 overflow-hidden">
+    <div className="flex flex-col h-full bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center gap-2">
           {/* View toggle */}
-          <div className="flex rounded-lg border border-gray-200 overflow-hidden">
-            <button className="px-3 py-1.5 text-[11px] font-semibold bg-white text-gray-700 border-r border-gray-200">
+          <div className="flex rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <button className="px-3 py-1.5 text-[11px] font-semibold bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">
               Сар
             </button>
-            <button className="px-3 py-1.5 text-[11px] font-medium text-gray-400 hover:bg-gray-50">
+            <button className="px-3 py-1.5 text-[11px] font-medium text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800">
               Долоо хоног
             </button>
           </div>
@@ -71,7 +71,7 @@ export default function Calendar({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCur(new Date(y, m - 1, 1))}
-            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-gray-100 text-gray-500"
+            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
               <path
@@ -82,12 +82,12 @@ export default function Calendar({
               />
             </svg>
           </button>
-          <span className="text-[13px] font-bold text-gray-800 min-w-[90px] text-center">
+          <span className="text-[13px] font-bold text-gray-800 dark:text-gray-100 min-w-[90px] text-center">
             {y} оны {MONTH_NAMES[m]}
           </span>
           <button
             onClick={() => setCur(new Date(y, m + 1, 1))}
-            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-gray-100 text-gray-500"
+            className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
               <path
@@ -99,7 +99,7 @@ export default function Calendar({
             </svg>
           </button>
         </div>
-        <button className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100">
+        <button className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
             <path
               d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"
@@ -112,11 +112,11 @@ export default function Calendar({
       </div>
 
       {/* Day names */}
-      <div className="grid grid-cols-7 border-b border-gray-100 bg-gray-50">
+      <div className="grid grid-cols-7 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
         {DAY_NAMES.map((d) => (
           <div
             key={d}
-            className="py-2 text-center text-[10px] font-bold text-gray-400 tracking-wider"
+            className="py-2 text-center text-[10px] font-bold text-gray-400 dark:text-gray-500 tracking-wider"
           >
             {d}
           </div>
@@ -135,8 +135,8 @@ export default function Calendar({
             <div
               key={idx}
               onClick={() => isCur && onSelectDate(key)}
-              className={`border-b border-r border-gray-100 p-1.5 cursor-pointer overflow-hidden transition-colors
-                ${!isCur ? "bg-gray-50/60" : sel ? "bg-indigo-50/70" : "hover:bg-gray-50"}
+              className={`border-b border-r border-gray-100 dark:border-gray-800 p-1.5 cursor-pointer overflow-hidden transition-colors
+                ${!isCur ? "bg-gray-50/60 dark:bg-gray-800/60" : sel ? "bg-[#5048e5]/10" : "hover:bg-gray-50 dark:hover:bg-gray-800"}
               `}
               style={{ minHeight: 72 }}
             >
@@ -144,12 +144,12 @@ export default function Calendar({
               <div className="flex items-center justify-between mb-1">
                 <span
                   className={`text-[11px] font-semibold w-5 h-5 flex items-center justify-center rounded-full
-                  ${tod ? "bg-indigo-600 text-white" : isCur ? "text-gray-700" : "text-gray-300"}`}
+                  ${tod ? "bg-[#5048e5] text-white" : isCur ? "text-gray-700 dark:text-gray-200" : "text-gray-300 dark:text-gray-600"}`}
                 >
                   {day}
                 </span>
                 {dayEvs.some((e) => e.auto) && (
-                  <span className="text-[8px] font-bold text-indigo-400">
+                  <span className="text-[8px] font-bold text-[#5048e5]">
                     ⚡
                   </span>
                 )}
@@ -185,7 +185,7 @@ export default function Calendar({
                   );
                 })}
                 {dayEvs.length > 2 && (
-                  <p className="text-[9px] text-gray-400 pl-1">
+                  <p className="text-[9px] text-gray-400 dark:text-gray-500 pl-1">
                     +{dayEvs.length - 2}
                   </p>
                 )}

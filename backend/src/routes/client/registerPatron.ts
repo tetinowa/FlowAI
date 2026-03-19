@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
 import prisma from "../../lib/prisma";
+import type { PrismaClient } from "@prisma/client";
 import { clerkClient } from "../../lib/clerkClient";
 
 export const registerPatron: RequestHandler = async (req, res) => {
@@ -21,13 +22,17 @@ export const registerPatron: RequestHandler = async (req, res) => {
       return res.status(200).json({ success: true, data: existingUser });
     }
 
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'>) => {
       const organization = await tx.organization.create({
         data: {
           id: clerkId,
           name: data.name,
           industry: data.industry,
           patronage: "BASIC",
+          address: data.address ?? "",
+          description: data.description ?? "",
+          emailAddress: data.emailAddress ?? "",
+          phoneNumber: data.phoneNumber ?? "",
           createdAt: new Date(),
         },
       });
