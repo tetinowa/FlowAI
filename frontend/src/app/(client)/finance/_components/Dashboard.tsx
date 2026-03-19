@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { RevenueCard } from "./RevenueCard";
+import { useEffect } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 interface FinanceRecord {
   revenue: number;
@@ -34,6 +36,8 @@ const MONTH_NAMES = [
 export const Dashboard = ({ aiResult }: { aiResult?: any }) => {
   const [revenue, setRevenue] = useState(0);
   const [expense, setExpense] = useState(0);
+  const [records, setRecords] = useState<FinanceRecord[]>([]);
+  const { getToken } = useAuth();
 
   useEffect(() => {
     async function fetchFinance() {
