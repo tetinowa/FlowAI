@@ -36,7 +36,7 @@ export default function OnboardingPage() {
     optKey: "",
   });
 
-  const { user } = useUser();
+  const { user: clerkUser } = useUser();
 
   useEffect(() => {
     try {
@@ -63,13 +63,13 @@ export default function OnboardingPage() {
   const redirecting = useRef(false);
 
   useEffect(() => {
-    if (user?.publicMetadata.onboardingComplete && !redirecting.current) {
+    if (clerkUser?.publicMetadata.onboardingComplete && !redirecting.current) {
       redirecting.current = true;
       session?.reload().then(() => {
         window.location.href = "/dashboard";
       });
     }
-  }, [user, session]);
+  }, [clerkUser, session]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -91,8 +91,8 @@ export default function OnboardingPage() {
         body: JSON.stringify({
           name: form.name,
           industry: form.businessType,
-          email: user?.primaryEmailAddress?.emailAddress,
-          phoneNumber: form.phone ?? user?.primaryPhoneNumber?.phoneNumber,
+          email: clerkUser?.primaryEmailAddress?.emailAddress,
+          phoneNumber: form.phone ?? clerkUser?.primaryPhoneNumber?.phoneNumber,
           address: form.address ?? "",
           description: form.description,
         }),
