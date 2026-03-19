@@ -41,7 +41,7 @@ app.post("/api/billing/checkout", requireAuth, createCheckout);
 app.post("/api/billing/portal", requireAuth, createPortal);
 
 
-const PORT = 8888;
+const PORT = process.env.PORT || 8888;
 app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
 });
