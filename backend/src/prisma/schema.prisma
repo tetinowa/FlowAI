@@ -64,6 +64,7 @@ model Post {
   content     String       @default("")
   platform    String
   reach       Int          @default(0)
+  published   Boolean      @default(false)
   publishedAt DateTime     @default(now())
   org         Organization @relation(fields: [orgId], references: [id])
 }

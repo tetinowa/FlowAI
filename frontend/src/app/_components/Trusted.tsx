@@ -1,31 +1,60 @@
-import Image from "next/image";
-
-const logos = [
-  "/logos/google.png",
-  "/logos/amazon.png",
-  "/logos/stripe.png",
-  "/logos/shopify.png",
-  "/logos/slack.png",
-];
+const banks = ["Хаан банк", "Голомт банк", "Хас банк", "ТДБ банк", "Капитал банк", "Ариг банк"];
 
 export default function TrustedBy() {
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-6 text-center">
-        <p className="text-sm font-semibold text-gray-500 tracking-widest uppercase">
-          10,000 гаруй өсөн нэмэгдэж буй бизнесүүдийн итгэлийг хүлээсэн
+    <section
+      style={{
+        background: "#0D1829",
+        borderTop: "1px solid rgba(0,212,255,0.06)",
+        borderBottom: "1px solid rgba(0,212,255,0.06)",
+      }}
+    >
+      <div className="container mx-auto px-6 py-12">
+        <p
+          className="text-center text-xs font-semibold tracking-[0.15em] uppercase mb-8"
+          style={{ color: "#6B8BAE", fontFamily: "Plus Jakarta Sans, sans-serif" }}
+        >
+          Монголын тэргүүлэх банкуудтай холбогддог
         </p>
 
-        <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 items-center">
-          {logos.map((logo, index) => (
-            <div key={index} className="flex justify-center">
-              <Image
-                src={logo}
-                alt="company logo"
-                width={120}
-                height={40}
-                className="opacity-60 hover:opacity-100 transition"
-              />
+        <div className="flex flex-wrap justify-center gap-3">
+          {banks.map((bank) => (
+            <div
+              key={bank}
+              className="px-5 py-2.5 rounded-full text-sm font-medium transition-all"
+              style={{
+                background: "rgba(0,212,255,0.05)",
+                border: "1px solid rgba(0,212,255,0.1)",
+                color: "#6B8BAE",
+                fontFamily: "Plus Jakarta Sans, sans-serif",
+              }}
+            >
+              {bank}
+            </div>
+          ))}
+        </div>
+
+        {/* Trust stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-12 pt-12" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+          {[
+            { n: "500+", l: "Идэвхтэй бизнес" },
+            { n: "10,000+", l: "Тайлан үүсгэгдсэн" },
+            { n: "₮2.4 тэр.", l: "Боловсруулсан гүйлгээ" },
+            { n: "99.9%", l: "Тайлангийн нарийвчлал" },
+          ].map(({ n, l }) => (
+            <div key={l} className="text-center">
+              <div
+                className="text-3xl font-black mb-1"
+                style={{ color: "#00D4FF", fontFamily: "Syne, sans-serif" }}
+              >
+                {n}
+              </div>
+              <div
+                className="text-sm"
+                style={{ color: "#6B8BAE", fontFamily: "Plus Jakarta Sans, sans-serif" }}
+              >
+                {l}
+              </div>
             </div>
           ))}
         </div>
