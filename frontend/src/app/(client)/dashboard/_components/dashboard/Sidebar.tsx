@@ -12,7 +12,6 @@ import {
   CreditCard,
   Receipt,
 } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 import {
   Sidebar,
   SidebarContent,
