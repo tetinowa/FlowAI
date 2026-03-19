@@ -124,12 +124,3 @@ enum Subscription {
   BASIC
   PRO
 }
-
-model InviteCode {
-  code      String   @unique
-  orgId     String
-  createdBy String
-  expiresAt DateTime
-
-  organization Organization @relation(fields: [orgId], references: [id])
-}

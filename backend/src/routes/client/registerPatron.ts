@@ -11,6 +11,8 @@ export const registerPatron: RequestHandler = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    const data = req.body;
+
     const existingUser = await prisma.client.findUnique({
       where: { id: clerkId },
     });
