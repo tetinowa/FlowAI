@@ -10,6 +10,7 @@ import {
   Settings,
   ShieldCheck,
   CreditCard,
+  Receipt,
 } from "lucide-react";
 import {
   Sidebar,
@@ -27,6 +28,7 @@ const navItems = [
   { label: "Нүүр", icon: Home, href: "/dashboard" },
   { label: "Санхүү AI", icon: Landmark, href: "/finance" },
   { label: "Маркетинг AI", icon: Megaphone, href: "/marketing" },
+  { label: "Татварын тайлан", icon: Receipt, href: "/tax" },
   { label: "Тариф & Төлбөр", icon: CreditCard, href: "/billing" },
   { label: "Тохиргоо", icon: Settings, href: "/settings" },
   { label: "Админ", icon: ShieldCheck, href: "/admin" },
