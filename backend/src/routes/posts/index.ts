@@ -2,6 +2,14 @@ import type { RequestHandler } from "express";
 import { Request, Response } from "express";
 import prisma from "../../lib/prisma";
 
+async function resolveOrgId(clerkUserId: string): Promise<string | null> {
+  const client = await prisma.client.findUnique({
+    where: { id: clerkUserId },
+    select: { orgId: true },
+  });
+  return client?.orgId ?? null;
+}
+
 // n8n API key шалгах middleware
 function requireApiKey(req: Request, res: Response, next: Function) {
   const key = Array.isArray(req.headers["x-api-key"])
@@ -48,7 +56,8 @@ export const markPublished: RequestHandler = async (req, res) => {
 export { requireApiKey };
 
 export const getPosts: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const orgId = await resolveOrgId(req.clerkUserId!);
+  if (!orgId) return res.status(404).json({ success: false, message: "Organization not found" });
   try {
     const posts = await prisma.post.findMany({
       where: { orgId },
@@ -62,7 +71,8 @@ export const getPosts: RequestHandler = async (req, res) => {
 };
 
 export const updatePost: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const orgId = await resolveOrgId(req.clerkUserId!);
+  if (!orgId) return res.status(404).json({ success: false, message: "Organization not found" });
   const id = req.params.id as string;
   const { content } = req.body;
   try {
@@ -76,7 +86,8 @@ export const updatePost: RequestHandler = async (req, res) => {
 };
 
 export const deletePost: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const orgId = await resolveOrgId(req.clerkUserId!);
+  if (!orgId) return res.status(404).json({ success: false, message: "Organization not found" });
   const id = req.params.id as string;
   try {
     const post = await prisma.post.findUnique({ where: { id } });
@@ -89,7 +100,8 @@ export const deletePost: RequestHandler = async (req, res) => {
 };
 
 export const publishNow: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const orgId = await resolveOrgId(req.clerkUserId!);
+  if (!orgId) return res.status(404).json({ success: false, message: "Organization not found" });
   const id = req.params.id as string;
   try {
     const post = await prisma.post.findUnique({ where: { id } });
@@ -120,7 +132,8 @@ export const publishNow: RequestHandler = async (req, res) => {
 
 
 export const deleteAllPosts: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const orgId = await resolveOrgId(req.clerkUserId!);
+  if (!orgId) return res.status(404).json({ success: false, message: "Organization not found" });
   try {
     await prisma.post.deleteMany({ where: { orgId } });
     return res.json({ success: true });
@@ -130,7 +143,8 @@ export const deleteAllPosts: RequestHandler = async (req, res) => {
 };
 
 export const createPost: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const orgId = await resolveOrgId(req.clerkUserId!);
+  if (!orgId) return res.status(404).json({ success: false, message: "Organization not found" });
   const { title, content, platform, scheduledDate, images } = req.body;
   try {
     const post = await prisma.post.create({
