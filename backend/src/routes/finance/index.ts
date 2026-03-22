@@ -2,7 +2,14 @@ import type { RequestHandler } from "express";
 import prisma from "../../lib/prisma";
 
 export const getFinance: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const clerkId = req.clerkUserId!;
+  const client = await prisma.client.findUnique({ where: { id: clerkId } });
+  if (!client?.orgId) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Client not found" });
+  }
+  const orgId = client.orgId;
   try {
     const finance = await prisma.finance.findMany({
       where: { orgId },
@@ -11,12 +18,20 @@ export const getFinance: RequestHandler = async (req, res) => {
     });
     return res.json({ success: true, data: finance });
   } catch (e) {
+    console.log("error:", e);
     return res.status(500).json({ success: false, message: e });
   }
 };
 
 export const saveAnalysis: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const clerkId = req.clerkUserId!;
+  const client = await prisma.client.findUnique({ where: { id: clerkId } });
+  if (!client?.orgId) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Client not found" });
+  }
+  const orgId = client.orgId;
   const { summary, categories, monthly, tips } = req.body;
   try {
     const record = await prisma.financeAnalysis.create({
@@ -24,12 +39,20 @@ export const saveAnalysis: RequestHandler = async (req, res) => {
     });
     return res.status(201).json({ success: true, data: record });
   } catch (e) {
+    console.log("error:", e);
     return res.status(500).json({ success: false, message: e });
   }
 };
 
 export const getAnalyses: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const clerkId = req.clerkUserId!;
+  const client = await prisma.client.findUnique({ where: { id: clerkId } });
+  if (!client?.orgId) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Client not found" });
+  }
+  const orgId = client.orgId;
   try {
     const analyses = await prisma.financeAnalysis.findMany({
       where: { orgId },
@@ -38,12 +61,20 @@ export const getAnalyses: RequestHandler = async (req, res) => {
     });
     return res.json({ success: true, data: analyses });
   } catch (e) {
+    console.log("error:", e);
     return res.status(500).json({ success: false, message: e });
   }
 };
 
 export const createFinance: RequestHandler = async (req, res) => {
-  const orgId = req.clerkUserId!;
+  const clerkId = req.clerkUserId!;
+  const client = await prisma.client.findUnique({ where: { id: clerkId } });
+  if (!client?.orgId) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Client not found" });
+  }
+  const orgId = client.orgId;
   const { month, balance, revenue, expense, netProfit, margin } = req.body;
 
   // Сарын эхний өдрөөр normalize хийнэ (2025-03-15 → 2025-03-01)
@@ -86,6 +117,7 @@ export const createFinance: RequestHandler = async (req, res) => {
 
     return res.status(201).json({ success: true, data: record });
   } catch (e) {
+    console.log("error:", e);
     return res.status(500).json({ success: false, message: e });
   }
 };

@@ -101,7 +101,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
 
   return (
     <div
-      className="relative w-full max-w-md bg-[#13141c] rounded-3xl border border-white/[0.07] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+      className="relative w-full max-w-md bg-card rounded-2xl border border-border overflow-hidden max-h-[90vh] flex flex-col"
       style={{ animation: "slideUp 0.45s cubic-bezier(0.16,1,0.3,1) both" }}
     >
       <div
@@ -117,17 +117,17 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
             {isIncome ? "💰" : "💸"}
           </div>
           <div>
-            <h2 className="text-[#eeeef5] font-black text-[18px] tracking-tight leading-tight">
+            <h2 className="text-foreground font-black text-[18px] tracking-tight leading-tight">
               Санхүүгийн мэдээлэл нэмэх
             </h2>
-            <p className="text-white/30 text-xs font-semibold mt-0.5 tracking-wide uppercase">
+            <p className="text-muted-foreground text-xs font-semibold mt-0.5 tracking-wide uppercase">
               Шинэ гүйлгээ бүртгэх
             </p>
           </div>
         </div>
 
         {/* Type Toggle */}
-        <div className="grid grid-cols-2 gap-1.5 bg-white/4 rounded-2xl p-1.5 mb-6">
+        <div className="grid grid-cols-2 gap-1.5 bg-muted rounded-2xl p-1.5 mb-6">
           {(["income", "expense"] as TransactionType[]).map((t) => (
             <button
               key={t}
@@ -141,7 +141,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
                   ? t === "income"
                     ? `bg-linear-to-r ${accentGradient} text-[#051a0c] shadow-lg shadow-emerald-500/25`
                     : `bg-linear-to-r ${accentGradient} text-white shadow-lg shadow-rose-500/25`
-                  : "text-white/35 hover:text-white/60 hover:bg-white/4"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
               {t === "income" ? "↑ Орлого" : "↓ Зарлага"}
@@ -151,7 +151,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
 
         {/* Categories */}
         <div className="mb-6">
-          <label className="block text-[10px] font-black text-white/30 uppercase tracking-widest mb-3">
+          <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">
             Ангилал
           </label>
           <div className="flex flex-wrap gap-2 mb-3">
@@ -166,7 +166,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
                       ? isIncome
                         ? "bg-emerald-400/15 border-emerald-400/40 text-emerald-300"
                         : "bg-rose-400/15 border-rose-400/40 text-rose-300"
-                      : "bg-white/4 border-white/8 text-white/40 hover:text-white/60 hover:bg-white/[0.07]"
+                      : "bg-muted border-border text-muted-foreground hover:text-foreground hover:bg-accent"
                   }`}
                 >
                   <span>{emoji}</span>
@@ -196,7 +196,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
                       onClick={() =>
                         setExpandedCategory(isExpanded ? null : cat)
                       }
-                      className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/2 transition-colors"
+                      className="w-full flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors"
                     >
                       <div className="flex items-center gap-2.5">
                         <span className="text-base">{catInfo?.emoji}</span>
@@ -212,7 +212,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
                             ₮{parseFloat(detail.amount).toLocaleString()}
                           </span>
                         ) : (
-                          <span className="text-[11px] text-white/25 font-medium">
+                          <span className="text-[11px] text-muted-foreground font-medium">
                             дүн оруулаагүй
                           </span>
                         )}
@@ -223,12 +223,12 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
                             e.stopPropagation();
                             toggleCategory(cat);
                           }}
-                          className="w-5 h-5 flex items-center justify-center rounded-full text-white/20 hover:text-white/60 hover:bg-white/10 text-sm transition-all"
+                          className="w-5 h-5 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-accent text-sm transition-all"
                         >
                           ×
                         </span>
                         <span
-                          className={`text-white/30 text-[10px] transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
+                          className={`text-muted-foreground text-[10px] transition-transform duration-300 ..." ${isExpanded ? "rotate-180" : ""}`}
                         >
                           ▼
                         </span>
@@ -236,9 +236,9 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
                     </button>
 
                     {isExpanded && (
-                      <div className="px-4 pb-4 flex flex-col gap-3 border-t border-white/5">
+                      <div className="px-4 pb-4 flex flex-col gap-3 border-t border-border">
                         <div className="pt-3">
-                          <label className="block text-[10px] font-black text-white/25 uppercase tracking-widest mb-1.5">
+                          <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
                             Дүн
                           </label>
                           <div className="relative">
@@ -255,12 +255,12 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
                               }
                               placeholder="0"
                               autoFocus
-                              className={`w-full bg-white/5 border border-white/8 rounded-xl pl-7 pr-3 py-2.5 text-sm font-bold text-[#eeeef5] outline-none ring-2 ring-transparent transition-all duration-200 ${focusRing} placeholder:text-white/15`}
+                              className={`w-full bg-background border border-border rounded-xl pl-7 pr-3 py-2.5 text-sm font-bold text-foreground outline-none ring-2 ring-transparent transition-all duration-200 ${focusRing} placeholder:text-muted-foreground`}
                             />
                           </div>
                         </div>
                         <div>
-                          <label className="block text-[10px] font-black text-white/25 uppercase tracking-widest mb-1.5">
+                          <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1.5">
                             Тэмдэглэл
                           </label>
                           <input
@@ -270,7 +270,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
                               updateDetail(cat, "note", e.target.value)
                             }
                             placeholder="Нэмэлт тайлбар..."
-                            className={`w-full bg-white/5 border border-white/8 rounded-xl px-3 py-2.5 text-sm font-semibold text-[#eeeef5] outline-none ring-2 ring-transparent transition-all duration-200 ${focusRing} placeholder:text-white/20`}
+                            className={`w-full bg-background border border-border rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground outline-none ring-2 ring-transparent transition-all duration-200 ${focusRing} placeholder:text-muted-foreground`}
                           />
                         </div>
                       </div>
@@ -284,7 +284,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
 
         {/* Date */}
         <div className="mb-7">
-          <label className="block text-[10px] font-black text-white/30 uppercase tracking-widest mb-2">
+          <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">
             Огноо
           </label>
           <div className="relative">
@@ -295,7 +295,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className={`w-full bg-white/5 border border-white/8 rounded-2xl pl-10 pr-4 py-3.5 text-sm font-semibold text-[#eeeef5] outline-none ring-4 ring-transparent transition-all duration-200 ${focusRing} scheme-dark`}
+              className={`w-full bg-background border border-border rounded-2xl pl-10 pr-4 py-3.5 text-sm font-semibold text-foreground outline-none ring-4 ring-transparent transition-all duration-200 ${focusRing}`}
             />
           </div>
         </div>
@@ -306,7 +306,7 @@ export default function FinanceForm({ onClose, onAdd }: FinanceFormProps) {
         <div className="flex gap-3 justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-3 rounded-2xl text-sm font-bold text-white/40 bg-white/5 border border-white/[0.07] hover:bg-white/9 hover:text-white/70 transition-all duration-200"
+            className="px-5 py-3 rounded-2xl text-sm font-bold text-muted-foreground bg-muted border border-border hover:bg-accent hover:text-foreground transition-all duration-200"
           >
             Болих
           </button>

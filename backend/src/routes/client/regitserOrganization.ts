@@ -21,6 +21,19 @@ export const registerOrganization: RequestHandler = async (req, res) => {
       });
     }
 
+    let client = await prisma.client.findUnique({ where: { id: clerkId } });
+    if (!client) {
+      client = await prisma.client.create({
+        data: {
+          id: clerkId,
+          role: "EXECUTIVE",
+          email: data.email ?? "",
+          firstname: clerkId,
+          lastname: "",
+        },
+      });
+    }
+
     //the section where the clerkid member is added:
 
     const clerkUser = await clerkClient.users.getUser(clerkId);

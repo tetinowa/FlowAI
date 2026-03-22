@@ -8,7 +8,9 @@ import { useUser } from "@clerk/nextjs";
 export default function DashboardPage() {
   const { user } = useUser();
   const name =
-    user?.firstName ?? user?.emailAddresses[0]?.emailAddress?.split("@")[0] ?? "Та";
+    user?.firstName ??
+    user?.emailAddresses[0]?.emailAddress?.split("@")[0] ??
+    "Та";
   return (
     <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-muted/30 text-foreground">
       {/* Welcome */}
@@ -23,7 +25,7 @@ export default function DashboardPage() {
 
       <FinanceSection />
       <MarketingSection />
-      <AIInsightBanner />
+      {/* <AIInsightBanner /> */}
     </div>
   );
 }

@@ -20,8 +20,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Dashboard } from "./Dashboard";
-import { GraphicSection } from "./GraphicSection";
 import { apiFetch } from "@/lib/apiFetch";
 import FinanceForm from "./FinanceForm";
 import { FinanceReport } from "./FinanceReport";
@@ -320,6 +318,20 @@ export default function FileUpload({ onResult }: FileUploadProps) {
       0,
     );
 
+    // Бүх гүйлгээний хүснэгт
+    const allTxRows = filteredTransactions
+      .map((tx) => {
+        const inc = Number(tx["Орлого"] || 0);
+        const exp = Number(tx["Зарлага"] || 0);
+        return `<tr>
+          <td>${String(tx["Огноо"]).slice(0, 10)}</td>
+          <td>${tx["Гүйлгээний утга"] ?? ""}</td>
+          <td style="text-align:right;color:#059669">${inc ? "₮" + inc.toLocaleString() : ""}</td>
+          <td style="text-align:right;color:#e11d48">${exp ? "₮" + exp.toLocaleString() : ""}</td>
+        </tr>`;
+      })
+      .join("");
+
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
     <title>Санхүүгийн тайлан</title>
     <style>
@@ -339,8 +351,10 @@ export default function FileUpload({ onResult }: FileUploadProps) {
       .expense-card .value{color:#e11d48}
       .net-card .value{color:#0284c7}
       h2{font-size:15px;margin:20px 0 10px;border-bottom:2px solid #e2e8f0;padding-bottom:6px;color:#334155}
+      h3{font-size:14px;color:#334155}
       table{width:100%;border-collapse:collapse;margin-bottom:16px}
-      td{padding:6px 12px;border-bottom:1px solid #f1f5f9}
+      th{font-weight:600}
+      td,th{padding:6px 12px;border-bottom:1px solid #f1f5f9}
       ul{padding-left:0;list-style:none;margin:0}
       li{padding:8px 12px;background:#f8fafc;border-radius:6px;margin-bottom:6px;border-left:3px solid #3b82f6}
       @media print{body{padding:16px}@page{margin:15mm}}
@@ -353,7 +367,17 @@ export default function FileUpload({ onResult }: FileUploadProps) {
       <div class="total-card expense-card"><div class="label">Нийт зарлага</div><div class="value">₮${totalExpense.toLocaleString()}</div></div>
       <div class="total-card net-card"><div class="label">Цэвэр ашиг</div><div class="value">₮${(totalIncome - totalExpense).toLocaleString()}</div></div>
     </div>
-    <h2>Сар сараар задаргаа</h2>
+    <h2>Бүх гүйлгээ (${filteredTransactions.length})</h2>
+    <table>
+      <thead><tr style="background:#f1f5f9;font-size:11px;text-transform:uppercase">
+        <th style="text-align:left;padding:6px 12px">Огноо</th>
+        <th style="text-align:left;padding:6px 12px">Утга</th>
+        <th style="text-align:right;padding:6px 12px">Орлого</th>
+        <th style="text-align:right;padding:6px 12px">Зарлага</th>
+      </tr></thead>
+      <tbody>${allTxRows}</tbody>
+    </table>
+    <h2>Ангилалаар задаргаа</h2>
     <table>${monthlyRows}</table>
     <h2>Зөвлөмж</h2>
     <ul>${tipsHtml}</ul>
@@ -373,9 +397,9 @@ export default function FileUpload({ onResult }: FileUploadProps) {
     [uploadedFiles, manualTransactions],
   );
 
-  const removeManualTransaction = (index: number) => {
-    setManualTransactions((prev) => prev.filter((_, i) => i !== index));
-  };
+  // const removeManualTransaction = (index: number) => {
+  //   setManualTransactions((prev) => prev.filter((_, i) => i !== index));
+  // };
 
   const availableMonths = useMemo(() => {
     const months = new Set<string>();
@@ -465,7 +489,9 @@ export default function FileUpload({ onResult }: FileUploadProps) {
     e.preventDefault();
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files).filter((f) =>
-      [".xlsx", ".xls", ".csv"].some((ext) => f.name.toLowerCase().endsWith(ext)),
+      [".xlsx", ".xls", ".csv"].some((ext) =>
+        f.name.toLowerCase().endsWith(ext),
+      ),
     );
     await processFiles(files);
   };
@@ -516,16 +542,19 @@ export default function FileUpload({ onResult }: FileUploadProps) {
         Authorization: `Bearer ${token}`,
       };
 
-      await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance/analysis`, {
-        method: "POST",
-        headers: authHeader,
-        body: JSON.stringify({
-          summary: result.summary,
-          categories: result.categories,
-          monthly: result.monthly ?? null,
-          tips: result.tips,
-        }),
-      });
+      await apiFetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/finance/analysis`,
+        {
+          method: "POST",
+          headers: authHeader,
+          body: JSON.stringify({
+            summary: result.summary,
+            categories: { income: result.income, expenses: result.expenses },
+            monthly: result.monthly ?? null,
+            tips: result.tips,
+          }),
+        },
+      );
 
       const monthly: {
         month: string;
@@ -650,17 +679,24 @@ export default function FileUpload({ onResult }: FileUploadProps) {
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
               className={`flex flex-col items-center justify-center gap-3 w-full rounded-2xl border-2 border-dashed cursor-pointer transition-all py-10 px-6 text-center
-                ${isDragging
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                  : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10"
+                ${
+                  isDragging
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                    : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40 hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10"
                 }`}
             >
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isDragging ? "bg-blue-100 dark:bg-blue-800" : "bg-slate-100 dark:bg-slate-700"}`}>
-                <UploadCloud className={`w-7 h-7 transition-colors ${isDragging ? "text-blue-500" : "text-slate-400 dark:text-slate-400"}`} />
+              <div
+                className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isDragging ? "bg-blue-100 dark:bg-blue-800" : "bg-slate-100 dark:bg-slate-700"}`}
+              >
+                <UploadCloud
+                  className={`w-7 h-7 transition-colors ${isDragging ? "text-blue-500" : "text-slate-400 dark:text-slate-400"}`}
+                />
               </div>
               <div>
                 <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-                  {isDragging ? "Файлыг энд тавина уу" : "Файлаа энд чирж тавь эсвэл сонго"}
+                  {isDragging
+                    ? "Файлыг энд тавина уу"
+                    : "Файлаа энд чирж тавь эсвэл сонго"}
                 </p>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                   Excel (.xlsx, .xls) болон CSV файл дэмжинэ
@@ -669,7 +705,10 @@ export default function FileUpload({ onResult }: FileUploadProps) {
               <button
                 type="button"
                 className="mt-1 px-5 py-2 rounded-xl text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-sm"
-                onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }}
               >
                 Файл сонгох
               </button>
@@ -877,43 +916,39 @@ export default function FileUpload({ onResult }: FileUploadProps) {
         </Card>
       </div>
       <div>
-        {monthlyGroups.length > 0 && (
-          <div>
-            <div className="flex items-center justify-center gap-4 py-4">
-              <button
-                onClick={() => setMonthIndex((p) => Math.max(p - 1, -1))}
-                disabled={monthIndex === -1}
-                className="text-indigo-600 disabled:text-gray-300 font-bold text-xl"
-              >
-                ←
-              </button>
-              <span className="font-semibold text-lg min-w-[180px] text-center">
-                {currentMonthLabel}
-              </span>
-              <button
-                onClick={() =>
-                  setMonthIndex((p) =>
-                    Math.min(p + 1, monthlyGroups.length - 1),
-                  )
-                }
-                disabled={monthIndex === monthlyGroups.length - 1}
-                className="text-indigo-600 disabled:text-gray-300 font-bold text-xl"
-              >
-                →
-              </button>
-            </div>
-
-            <FinanceReport
-              aiResult={currentMonthAiResult}
-              transactions={currentMonthTx.map((tx) => ({
-                date: String(tx["Огноо"] ?? ""),
-                description: String(tx["Гүйлгээний утга"] ?? ""),
-                amount: Number(tx["Зарлага"] || tx["Орлого"] || 0),
-                type: Number(tx["Орлого"] || 0) > 0 ? "income" : "expense",
-              }))}
-            />
+        <div>
+          <div className="flex items-center justify-center gap-4 py-4">
+            <button
+              onClick={() => setMonthIndex((p) => Math.max(p - 1, -1))}
+              disabled={monthIndex === -1}
+              className="text-indigo-600 disabled:text-gray-300 font-bold text-xl"
+            >
+              ←
+            </button>
+            <span className="font-semibold text-lg min-w-[180px] text-center">
+              {currentMonthLabel}
+            </span>
+            <button
+              onClick={() =>
+                setMonthIndex((p) => Math.min(p + 1, monthlyGroups.length - 1))
+              }
+              disabled={monthIndex === monthlyGroups.length - 1}
+              className="text-indigo-600 disabled:text-gray-300 font-bold text-xl"
+            >
+              →
+            </button>
           </div>
-        )}
+
+          <FinanceReport
+            aiResult={currentMonthAiResult}
+            transactions={currentMonthTx.map((tx) => ({
+              date: String(tx["Огноо"] ?? ""),
+              description: String(tx["Гүйлгээний утга"] ?? ""),
+              amount: Number(tx["Зарлага"] || tx["Орлого"] || 0),
+              type: Number(tx["Орлого"] || 0) > 0 ? "income" : "expense",
+            }))}
+          />
+        </div>
       </div>
     </>
   );
