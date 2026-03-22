@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Platform, Post, SavedPost, ImageItem, PLATFORM_COLORS } from "./constants";
+import { apiFetch } from "@/lib/apiFetch";
 
 interface PostCardProps {
   post: Post;
@@ -44,7 +45,7 @@ export function PostCard({ post, images = [], onSaved }: PostCardProps) {
         Twitter: "TWITTER",
         Instagram: "INSTAGRAM",
       };
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
+      const res = await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({

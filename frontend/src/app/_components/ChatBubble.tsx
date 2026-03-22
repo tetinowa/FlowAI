@@ -1,6 +1,7 @@
 "use client";
 import { ArrowUp, Bot, Sparkles, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { apiFetch } from "@/lib/apiFetch";
 
 type Message = {
   role: "user" | "assistant";
@@ -31,7 +32,7 @@ export default function ChatBubble() {
     setInput("");
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat`, {
+      const response = await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ chats: updatedChat }),

@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Dashboard } from "./Dashboard";
 import { GraphicSection } from "./GraphicSection";
+import { apiFetch } from "@/lib/apiFetch";
 import FinanceForm from "./FinanceForm";
 import { FinanceReport } from "./FinanceReport";
 
@@ -229,7 +230,7 @@ export default function FileUpload({ onResult }: FileUploadProps) {
     const loadSavedAnalysis = async () => {
       try {
         const token = await getToken();
-        const res = await fetch(
+        const res = await apiFetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/finance/analysis`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -515,7 +516,7 @@ export default function FileUpload({ onResult }: FileUploadProps) {
         Authorization: `Bearer ${token}`,
       };
 
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance/analysis`, {
+      await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance/analysis`, {
         method: "POST",
         headers: authHeader,
         body: JSON.stringify({
@@ -578,7 +579,7 @@ export default function FileUpload({ onResult }: FileUploadProps) {
           typeof raw.month === "string" && raw.month.length === 7
             ? raw.month + "-01"
             : raw.month;
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
+        await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
           method: "POST",
           headers: authHeader,
           body: JSON.stringify({

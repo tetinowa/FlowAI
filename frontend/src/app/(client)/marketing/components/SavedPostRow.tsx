@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Textarea } from "@/components/ui/textarea";
 import { Pencil, Trash2, Check, X, Send } from "lucide-react";
 import { Platform, SavedPost, PLATFORM_COLORS } from "./constants";
+import { apiFetch } from "@/lib/apiFetch";
 
 interface SavedPostRowProps {
   post: SavedPost;
@@ -26,7 +27,7 @@ export function SavedPostRow({ post, onUpdated, onDeleted }: SavedPostRowProps) 
     setPublishing(true);
     try {
       const token = await getToken();
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post.id}/publish-now`, {
+      const res = await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post.id}/publish-now`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -43,7 +44,7 @@ export function SavedPostRow({ post, onUpdated, onDeleted }: SavedPostRowProps) 
     setSaving(true);
     try {
       const token = await getToken();
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post.id}`, {
+      const res = await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ content: editContent }),
@@ -59,7 +60,7 @@ export function SavedPostRow({ post, onUpdated, onDeleted }: SavedPostRowProps) 
     setDeleting(true);
     try {
       const token = await getToken();
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post.id}`, {
+      await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post.id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

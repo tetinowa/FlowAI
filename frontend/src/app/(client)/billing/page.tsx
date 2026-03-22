@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Check, Zap, Crown } from "lucide-react";
+import { apiFetch } from "@/lib/apiFetch";
 
 export default function BillingPage() {
   const { getToken } = useAuth();
@@ -12,7 +13,7 @@ export default function BillingPage() {
   useEffect(() => {
     async function fetchStatus() {
       const token = await getToken();
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/billing/status`, {
+      const res = await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/billing/status`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -25,7 +26,7 @@ export default function BillingPage() {
     setLoading(true);
     try {
       const token = await getToken();
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/billing/checkout`, {
+      const res = await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/billing/checkout`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -42,7 +43,7 @@ export default function BillingPage() {
     setPortalLoading(true);
     try {
       const token = await getToken();
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/billing/portal`, {
+      const res = await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/billing/portal`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });

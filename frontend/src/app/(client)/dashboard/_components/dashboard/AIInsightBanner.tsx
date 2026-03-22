@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiFetch } from "@/lib/apiFetch";
 
 export function AIInsightBanner() {
   const { getToken } = useAuth();
@@ -14,7 +15,7 @@ export function AIInsightBanner() {
 
   useEffect(() => {
     getToken().then((token) => {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance/analysis`, {
+      apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance/analysis`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())

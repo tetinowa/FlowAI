@@ -6,6 +6,7 @@ import { StrategyForm } from "./components/StrategyForm";
 import { ContentCalendar } from "./components/ContentCalendar";
 import { SavedPostsList } from "./components/SavedPostsList";
 import { Post, ImageItem, SavedPost } from "./components/constants";
+import { apiFetch } from "@/lib/apiFetch";
 
 export default function MarketingPage() {
   const [productName, setProductName] = useState("");
@@ -40,7 +41,7 @@ export default function MarketingPage() {
 
   useEffect(() => {
     getToken().then((token) => {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
+      apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((r) => r.json())
@@ -58,7 +59,7 @@ export default function MarketingPage() {
 
   useEffect(() => {
     getToken().then((token) => {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/marketing/strategy`, {
+      apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/marketing/strategy`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((r) => {
@@ -165,7 +166,7 @@ export default function MarketingPage() {
         setTimeout(() => setVisiblePosts(i + 1), i * 150);
       });
       const token = await getToken();
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/marketing/strategy`, {
+      apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/marketing/strategy`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ productName, description, targetAudience, advice: data.advice }),
@@ -235,7 +236,7 @@ export default function MarketingPage() {
             onDeletedAll={async () => {
               if (!confirm("Бүх хадгалсан постуудыг устгах уу?")) return;
               const token = await getToken();
-              fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
+              apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
               }).catch(console.error);

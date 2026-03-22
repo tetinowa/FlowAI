@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { RevenueCard } from "./RevenueCard";
+import { apiFetch } from "@/lib/apiFetch";
 
 interface FinanceRecord {
   revenue: number;
@@ -25,7 +26,7 @@ export const Dashboard = ({ aiResult }: { aiResult?: any }) => {
     async function fetchFinance() {
       try {
         const token = await getToken();
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
+        const res = await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

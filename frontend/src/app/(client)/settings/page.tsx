@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { Building2, User, Save, Loader2 } from "lucide-react";
+import { apiFetch } from "@/lib/apiFetch";
 
 const INDUSTRIES = [
   { value: "TECH", label: "Мэдээллийн технологи" },
@@ -25,7 +26,7 @@ export default function SettingsPage() {
     async function load() {
       try {
         const token = await getToken();
-        const res = await fetch(
+        const res = await apiFetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/company`,
           {
             headers: { Authorization: `Bearer ${token}` },
@@ -52,7 +53,7 @@ export default function SettingsPage() {
     setSuccess(false);
     try {
       const token = await getToken();
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/company`, {
+      await apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/company`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { Wallet } from "lucide-react";
 import { SectionHeader } from "./SectionHeader";
+import { apiFetch } from "@/lib/apiFetch";
 
 interface FinanceRecord {
   revenue: number;
@@ -22,7 +23,7 @@ export function FinanceSection() {
 
   useEffect(() => {
     getToken().then((token) => {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
+      apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())

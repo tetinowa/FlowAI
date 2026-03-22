@@ -13,6 +13,7 @@ import {
   Calendar,
   TrendingUp,
 } from "lucide-react";
+import { apiFetch } from "@/lib/apiFetch";
 
 interface FinanceRecord {
   id: string;
@@ -125,7 +126,7 @@ export default function TaxPage() {
 
   useEffect(() => {
     getToken().then((token) => {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
+      apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/finance`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((r) => r.json())

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { Rocket } from "lucide-react";
 import { SectionHeader } from "./SectionHeader";
+import { apiFetch } from "@/lib/apiFetch";
 
 const PLATFORM_GRADIENTS: Record<string, string> = {
   LinkedIn: "from-blue-600 to-blue-400",
@@ -130,7 +131,7 @@ export function MarketingSection() {
 
   useEffect(() => {
     getToken().then((token) => {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
+      apiFetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((r) => r.json())
