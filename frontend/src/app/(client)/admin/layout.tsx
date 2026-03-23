@@ -1,7 +1,5 @@
 "use client";
 
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { ControlSideBar } from "@/app/administrator/_parts/ControlSideBar";
 
 /**
  * Layout component that enforces onboarding completion and renders the dashboard shell.
