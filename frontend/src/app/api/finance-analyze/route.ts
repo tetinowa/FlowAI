@@ -1,11 +1,9 @@
 // import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { useUser } from "@clerk/nextjs";
 
 export async function POST(request: NextRequest) {
   try {
-    const { user } = useUser();
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
         { error: "OPENAI_API_KEY тохируулагдаагүй байна." },
@@ -17,7 +15,7 @@ export async function POST(request: NextRequest) {
       apiKey: process.env.OPENAI_API_KEY,
     });
     const body = await request.json();
-    const { transactions } = body;
+    const { transactions, clientId } = body;
 
     if (!transactions || transactions.length === 0) {
       return NextResponse.json(
@@ -98,7 +96,7 @@ export async function POST(request: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        clientId: user?.id as string,
+        clientId: clientId as string,
       }),
     });
 

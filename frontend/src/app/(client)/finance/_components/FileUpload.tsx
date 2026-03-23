@@ -216,7 +216,7 @@ const getMonthLabel = (key: string): string => {
 };
 
 export default function FileUpload({ onResult }: FileUploadProps) {
-  const { getToken } = useAuth();
+  const { getToken, userId } = useAuth();
   const [uploadedFiles, setUploadeddFiles] = useState<UploadedFile[]>([]);
   const [manualTransactions, setManualTransactions] = useState<Transaction[]>(
     [],
@@ -522,7 +522,7 @@ export default function FileUpload({ onResult }: FileUploadProps) {
       const response = await fetch("/api/finance-analyze", {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ transactions: transactionsWithMonth }),
+        body: JSON.stringify({ transactions: transactionsWithMonth, clientId: userId }),
       });
       if (!response.ok) {
         const text = await response.text();
