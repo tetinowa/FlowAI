@@ -5,9 +5,6 @@ CREATE TYPE "Industry" AS ENUM ('TECH', 'FINANCE', 'HEALTHCARE', 'EDUCATION', 'R
 CREATE TYPE "MemberAccessType" AS ENUM ('EXECUTIVE', 'MANAGEMENT', 'MEMBER');
 
 -- CreateEnum
-CREATE TYPE "ExpenseType" AS ENUM ('БУСАД');
-
--- CreateEnum
 CREATE TYPE "Subscription" AS ENUM ('BASIC', 'PRO');
 
 -- CreateTable
@@ -17,8 +14,28 @@ CREATE TABLE "Organization" (
     "industry" "Industry" NOT NULL,
     "patronage" "Subscription" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "address" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "emailAddress" TEXT NOT NULL,
+    "phoneNumber" TEXT NOT NULL,
+    "stripeCustomerId" TEXT,
+    "stripeSubscriptionId" TEXT,
 
     CONSTRAINT "Organization_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "MarketingStrategy" (
+    "id" TEXT NOT NULL,
+    "orgId" TEXT NOT NULL,
+    "productName" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "targetAudience" TEXT NOT NULL,
+    "advice" TEXT,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "MarketingStrategy_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -71,6 +88,8 @@ CREATE TABLE "Post" (
     "platform" TEXT NOT NULL,
     "reach" INTEGER NOT NULL DEFAULT 0,
     "publishedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "published" BOOLEAN NOT NULL DEFAULT false,
+    "images" JSONB NOT NULL DEFAULT '[]',
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );
@@ -95,8 +114,23 @@ CREATE TABLE "InviteCode" (
     "expiresAt" TIMESTAMP(3) NOT NULL
 );
 
+-- CreateTable
+CREATE TABLE "AuditLog" (
+    "id" TEXT NOT NULL,
+    "clientId" TEXT NOT NULL,
+    "action" TEXT NOT NULL,
+    "target" TEXT NOT NULL,
+    "details" JSONB,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "AuditLog_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Organization_id_key" ON "Organization"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MarketingStrategy_orgId_key" ON "MarketingStrategy"("orgId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Client_id_key" ON "Client"("id");
@@ -109,6 +143,9 @@ CREATE UNIQUE INDEX "Administrator_username_key" ON "Administrator"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "InviteCode_code_key" ON "InviteCode"("code");
+
+-- AddForeignKey
+ALTER TABLE "MarketingStrategy" ADD CONSTRAINT "MarketingStrategy_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Client" ADD CONSTRAINT "Client_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "Organization"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -124,3 +161,6 @@ ALTER TABLE "Post" ADD CONSTRAINT "Post_orgId_fkey" FOREIGN KEY ("orgId") REFERE
 
 -- AddForeignKey
 ALTER TABLE "InviteCode" ADD CONSTRAINT "InviteCode_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

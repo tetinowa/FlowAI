@@ -61,43 +61,19 @@ function CountdownDisplay({ expiresAt }: { expiresAt: Date }) {
 const AdminPage = () => {
   const [members, setMembers] = useState<ClientType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [codeloading, setCodeloading] = useState(false);
   const [company, setCompany] = useState<OrganizationInterface | null>(null);
   const [code, setCode] = useState<InvCode | "">("");
+  const [loadingA, setLoadingA] = useState(false);
   const router = useRouter();
   const { user } = useUser();
 
   const { getToken } = useAuth();
-  useEffect(() => {
-    const fetchMemberData = async () => {
-      const token = await getToken();
-      setLoading(true);
-      try {
-        const res = await apiFetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/company/members`,
-          {
-            method: "GET",
-            headers: {
-              "Content-type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        const response = await res.json();
-
-        setMembers(response.data ?? []);
-        setLoading(false);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMemberData();
-  }, []);
 
   useEffect(() => {
     async function load() {
       try {
+        setLoadingA(true);
         const token = await getToken();
         const res = await apiFetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/company`,
@@ -105,14 +81,14 @@ const AdminPage = () => {
             headers: { Authorization: `Bearer ${token}` },
           },
         );
+
         const data = await res.json();
-        if (data.success) {
-          setCompany(data.data.ofOrg);
-        }
+        setCompany(data.company);
+        setLoadingA(false);
       } catch (e) {
         console.error(e);
       } finally {
-        setLoading(false);
+        setLoadingA(false);
       }
     }
     load();
@@ -120,6 +96,7 @@ const AdminPage = () => {
 
   const handleGetCode = async () => {
     const token = await getToken();
+
     try {
       const res = await apiFetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/onboarding/getcode`,
@@ -142,13 +119,11 @@ const AdminPage = () => {
       console.log(e);
       alert("Сервертэй холбогдож чадсангүй");
     }
-
-
-    
   };
-
+  const timeLeft = useCountdown(code ? new Date(code.expiresAt) : new Date());
+  console.log("company", company);
   return (
-    <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-muted/30 text-foreground">
+    <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-muted/30 text-foreground no-scrollbar">
       <section>
         <h2 className="text-3xl font-black text-foreground tracking-tight">
           Admin Dashboard
@@ -164,18 +139,43 @@ const AdminPage = () => {
           <p className="text-sm text-muted-foreground">
             Authorize new member registry under your organization
           </p>
-          <Button
-            className="bg-[#5048e5] hover:bg-[#4038d4] text-white"
-            onClick={handleGetCode}
-          >
-            Get Code
-          </Button>
+          {loadingA ? (
+            <>loading...</>
+          ) : (
+            <>
+              {" "}
+              {company?.patronage === "BASIC" ? (
+                <Button
+                  variant={"outline"}
+                  onClick={() => {
+                    router.push("/billing");
+                  }}
+                >
+                  This privilege is only available for PRO members. current
+                  plan: {company.patronage}
+                </Button>
+              ) : (
+                <Button
+                  className="bg-[#5048e5] hover:bg-[#4038d4] text-white"
+                  onClick={handleGetCode}
+                >
+                  Get Code
+                </Button>
+              )}
+            </>
+          )}
+
           {code !== "" && typeof code === "object" && (
             <div className="mt-3 p-4 rounded-lg bg-muted border border-border space-y-1">
-              <p className="text-xs text-muted-foreground">Урилгын код (10 минут хүчинтэй)</p>
-              <p className="text-3xl font-mono font-bold tracking-widest text-[#5048e5]">{code.optKey}</p>
               <p className="text-xs text-muted-foreground">
-                Дуусах хугацаа: <CountdownDisplay expiresAt={new Date(code.expiresAt)} />
+                Урилгын код (10 минут хүчинтэй)
+              </p>
+              <p className="text-3xl font-mono font-bold tracking-widest text-[#5048e5]">
+                {code.optKey}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Дуусах хугацаа:{" "}
+                <CountdownDisplay expiresAt={new Date(code.expiresAt)} />
               </p>
             </div>
           )}

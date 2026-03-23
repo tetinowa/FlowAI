@@ -20,7 +20,7 @@ export const registerPatron: RequestHandler = async (req, res) => {
       return res.status(403).json({ message: "user already registered" });
     }
 
-    const result = await prisma.$transaction(async (tx: Omit<PrismaClient, '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'>) => {
+    const result = await prisma.$transaction(async (tx) => {
       const organization = await tx.organization.create({
         data: {
           id: clerkId,
@@ -31,7 +31,6 @@ export const registerPatron: RequestHandler = async (req, res) => {
           description: data.description ?? "",
           emailAddress: data.emailAddress ?? "",
           phoneNumber: data.phoneNumber ?? "",
-          createdAt: new Date(),
         },
       });
 
@@ -44,6 +43,28 @@ export const registerPatron: RequestHandler = async (req, res) => {
           firstname: data.firstname,
           lastname: data.lastname,
         },
+      });
+
+      //audit log recorder
+      await prisma.auditLog.createMany({
+        data: [
+          {
+            clientId: clerkId,
+            action: "CREATE",
+            target: "ORGANIZATION",
+            details: {
+              organizationId: organization.name,
+            },
+          },
+          {
+            clientId: `${organization.id}`,
+            action: "JOIN",
+            target: "PATRONAGE",
+            details: {
+              patronage: organization.patronage,
+            },
+          },
+        ],
       });
 
       return { organization, newClient };

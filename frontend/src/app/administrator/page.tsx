@@ -14,18 +14,17 @@ const AdminPage = () => {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  
+
   const handleClick = async () => {
     try {
       setLoading(true);
       setError("");
       const res = await loginAdmin(username, password);
-      console.log(res);
       if (res.data.success) {
         const token = res.data.res;
-        localStorage.setItem("accessToken", token);
-        alert("Youkoso, Supa-Dupa Admin-Sama!");
-        router.push("/administrator/dashboard");
+        localStorage.setItem("adminToken", token);
+        alert("ようこそ、スーパードゥーパ管理人様!");
+        router.push("/administrator/main");
       }
     } catch (e) {
       setError("Invalid username or password");
@@ -42,13 +41,17 @@ const AdminPage = () => {
             <span className="text-lg font-bold">S</span>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-foreground leading-none">Super Admin</h1>
+            <h1 className="text-lg font-bold text-foreground leading-none">
+              Super Admin
+            </h1>
             <p className="text-xs text-muted-foreground mt-0.5">Flow AI</p>
           </div>
         </div>
 
         <div>
-          <h2 className="text-2xl font-black text-foreground tracking-tight">Welcome back</h2>
+          <h2 className="text-2xl font-black text-foreground tracking-tight">
+            Welcome back
+          </h2>
           <p className="text-sm text-muted-foreground mt-1">
             Enter your credentials to access the Super Admin panel.
           </p>

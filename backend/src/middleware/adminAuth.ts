@@ -29,7 +29,6 @@ export const AdminAuth: RequestHandler = async (req, res, next) => {
     if (!admin) {
       return res.status(404).json({ success: false, message: "admin obso" });
     }
-
     next();
   } catch (e) {
     console.error(e);

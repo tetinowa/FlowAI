@@ -1,59 +1,156 @@
 "use client";
-
-import { createContext, ReactNode, useContext, useState } from "react";
-import { OrganizationInterface } from "../Types";
+import { adminApi } from "@/lib/adminApi";
 import {
-  getClients,
-  getCompanies,
-  loginAdmin,
-  deleteCompany,
-} from "@/lib/adminApi";
-export const AdminContext = createContext<any>(null);
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useEffect
+} from "react";
+import { OrganizationInterface } from "../Types";
+import { Dispatch, SetStateAction } from "react";
+import { ClientType } from "../Types";
 interface AdminContextType {
-  login: () => Promise<void>;
-  lastAccessTime: Date;
-  companies: OrganizationInterface[] | [];
-  users: ClientTypes[] | [];
+  showSideBar: boolean;
+  setShowSideBar: Dispatch<SetStateAction<boolean>>;
+  lastAccessTime: string;
   fetchCompaniesData: () => Promise<void>;
-  fetchUsersOfCompanies: () => Promise<void>;
-  createCompany: () => Promise<OrganizationInterface>;
-  deleteCompany: () => Promise<void>;
+  companies: OrganizationInterface[] | [];
+  singleorg: OrganizationInterface | null;
+  users: ClientType[] | [];
+  allusers: ClientType[] | [];
+  fetchUsersOfCompanies: (orgId: string) => Promise<void>;
+  fetchCompanyById: (orgId: string) => Promise<void>;
+  fetchAuditLog: () => Promise<void>;
+  createCompany: (data: OrganizationInterface) => Promise<void>;
+  deleteCompany: (id: string) => Promise<void>;
+  auditLog: AuditLogtype[] | [];
 }
+
+type AuditLogtype = {
+  id: string;
+  clientId: string;
+  action: string;
+  target: string;
+  details: object;
+  date: Date;
+};
+export const AdminContext = createContext({} as AdminContextType);
 export const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [companies, setCompanies] = useState<OrganizationInterface[]>([]);
-  const [users, setUsers] = useState<ClientTypes[]>([]);
-  const [lastAccessTime, setLastAccessTime] = useState<Date>(new Date());
+  const [owners, setOwners] = useState<ClientType[]>([]);
+  const [singleorg, setSingleorg] = useState<OrganizationInterface | null>(
+    null,
+  );
+  const [users, setUsers] = useState<ClientType[]>([]);
+  const [allusers, setAllUsers] = useState<ClientType[]>([]);
+  const [lastAccessTime, setLastAccessTime] = useState("");
+  const [auditLog, setAuditlog] = useState<AuditLogtype[]>([]);
+  const [showSideBar, setShowSideBar] = useState(false);
 
-  async function login(username: string, password: string) {
-    try {
-      const res = await loginAdmin(username, password);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
+  useEffect(() => {
+    const time = new Date();
+    const date = time.toISOString();
+    setLastAccessTime(date);
+  }, []);
 
   async function fetchCompaniesData() {
     //function for getting all data of companies
     try {
-      const [companiesRes, usersRes] = await Promise.all([
-        getCompanies(),
-        getClients(),
-      ]);
-      console.log(companiesRes.data, usersRes.data);
-      setCompanies(companiesRes.data?.companyData);
-      setUsers(usersRes.data?.usersData);
+      const res = await adminApi.get("/api/admin/companies");
+
+      const data = res.data.companyData;
+      setCompanies(data);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  async function fetchAllOwners() {
+    try {
+      const res = await adminApi.get("/api/admin/clients");
+      const data = res.data.usersData;
+
+      setAllUsers(data);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  async function fetchCompanyById(orgId: string) {
+    try {
+      const res = await adminApi.get(`/api/admin/companies/${orgId}`);
+      setSingleorg(res.data);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  async function fetchUsersOfCompanies(orgId: string) {
+    try {
+      const res = await adminApi.get(`/api/admin/companies/${orgId}/members`);
+      setUsers(res.data);
     } catch (e) {
       console.error(e);
     }
   }
 
-  async function createCompany () {
+  async function createCompany(data: any) {
     try {
-        const res = await fetch('/api/admin/companies')
-    } catch(e) {}
+      const res = await adminApi.post("/api/admin/companies", data);
+      if (res) {
+        console.log(res);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
-  return <AdminContext.Provider value={{login, fetchCompaniesData, lastAccessTime, users, companies, deleteCompany, createCompany}}>{children}</AdminContext.Provider>;
+  async function deleteCompany(OrgId: string) {
+    try {
+      const res = await adminApi.delete(`/api/admin/companies/${OrgId}`);
+      if (res) {
+        console.log(res);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function fetchAuditLog() {
+    try {
+      const res = await adminApi.get("/api/auditlog");
+      setAuditlog(res.data);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  useEffect(() => {
+    fetchCompaniesData();
+    fetchAllOwners();
+    fetchAuditLog();
+  }, [lastAccessTime]);
+
+  console.log("adminprivoder", companies)
+  return (
+    <AdminContext.Provider
+      value={{
+        showSideBar,
+        setShowSideBar,
+        lastAccessTime,
+        fetchCompaniesData,
+        companies,
+        singleorg,
+        allusers,
+        users,
+        fetchUsersOfCompanies,
+        fetchCompanyById,
+        fetchAuditLog,
+        createCompany,
+        deleteCompany,
+        auditLog,
+      }}
+    >
+      {children}
+    </AdminContext.Provider>
+  );
 };
 
 export const useAdmin = () => {
@@ -61,4 +158,5 @@ export const useAdmin = () => {
   if (!context) {
     throw new Error("useAdmin must be used within AdminProvider");
   }
+  return context;
 };

@@ -12,7 +12,7 @@ export default function DashboardPage() {
     user?.emailAddresses[0]?.emailAddress?.split("@")[0] ??
     "Та";
   return (
-    <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-muted/30 text-foreground">
+    <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-muted/30 text-foreground no-scrollbar">
       {/* Welcome */}
       <section>
         <h2 className="text-3xl font-black text-foreground tracking-tight">

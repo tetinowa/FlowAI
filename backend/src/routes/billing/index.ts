@@ -3,7 +3,8 @@ import { Request, Response } from "express";
 import prisma from "../../lib/prisma";
 
 function getStripe() {
-  if (!process.env.STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY тохируулагдаагүй байна");
+  if (!process.env.STRIPE_SECRET_KEY)
+    throw new Error("STRIPE_SECRET_KEY тохируулагдаагүй байна");
   return new Stripe(process.env.STRIPE_SECRET_KEY);
 }
 
@@ -14,7 +15,9 @@ export async function getBillingStatus(req: Request, res: Response) {
     const client = await prisma.client.findUnique({ where: { id: userId } });
     if (!client?.orgId) return res.json({ success: true, patronage: "BASIC" });
 
-    const org = await prisma.organization.findUnique({ where: { id: client.orgId } });
+    const org = await prisma.organization.findUnique({
+      where: { id: client.orgId },
+    });
     return res.json({ success: true, patronage: org?.patronage ?? "BASIC" });
   } catch (e) {
     console.error(e);
@@ -28,11 +31,18 @@ export async function createCheckout(req: Request, res: Response) {
     const stripe = getStripe();
     const userId = req.clerkUserId;
     const client = await prisma.client.findUnique({ where: { id: userId } });
-    if (!client) return res.status(400).json({ error: "Client not found", userId });
-    if (!client.orgId) return res.status(400).json({ error: "Client has no orgId", userId });
+    if (!client)
+      return res.status(400).json({ error: "Client not found", userId });
+    if (!client.orgId)
+      return res.status(400).json({ error: "Client has no orgId", userId });
 
-    const org = await prisma.organization.findUnique({ where: { id: client.orgId } });
-    if (!org) return res.status(400).json({ error: "Org not found", orgId: client.orgId });
+    const org = await prisma.organization.findUnique({
+      where: { id: client.orgId },
+    });
+    if (!org)
+      return res
+        .status(400)
+        .json({ error: "Org not found", orgId: client.orgId });
 
     let customerId = org.stripeCustomerId;
     if (!customerId) {
@@ -42,9 +52,24 @@ export async function createCheckout(req: Request, res: Response) {
         metadata: { orgId: org.id },
       });
       customerId = customer.id;
-      await prisma.organization.update({
-        where: { id: org.id },
-        data: { stripeCustomerId: customerId },
+      // await prisma.organization.update({
+      //   where: { id: org.id },
+      //   data: { stripeCustomerId: customerId },
+      // });
+      await prisma.$transaction(async (tx) => {
+        await tx.organization.update({
+          where: { id: org.id },
+          data: { stripeCustomerId: customerId },
+        });
+
+        await tx.auditLog.create({
+          data: {
+            clientId: userId as string, // real user triggered this
+            action: "CREATE",
+            target: "PATRONAGE",
+            details: { orgId: org.id, customerId },
+          },
+        });
       });
     }
 
@@ -61,7 +86,9 @@ export async function createCheckout(req: Request, res: Response) {
     res.json({ success: true, url: session.url });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ success: false, error: "Checkout үүсгэхэд алдаа гарлаа" });
+    res
+      .status(500)
+      .json({ success: false, error: "Checkout үүсгэхэд алдаа гарлаа" });
   }
 }
 
@@ -75,7 +102,7 @@ export async function stripeWebhook(req: Request, res: Response) {
     event = stripe.webhooks.constructEvent(
       (req as any).rawBody ?? req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      process.env.STRIPE_WEBHOOK_SECRET!,
     );
   } catch (err: any) {
     console.error("Webhook signature error:", err.message);
@@ -86,21 +113,46 @@ export async function stripeWebhook(req: Request, res: Response) {
     const session = event.data.object as Stripe.Checkout.Session;
     const orgId = session.metadata?.orgId;
     if (orgId && session.subscription) {
-      await prisma.organization.update({
-        where: { id: orgId },
-        data: {
-          patronage: "PRO",
-          stripeSubscriptionId: session.subscription as string,
-        },
+      await prisma.$transaction(async (tx) => {
+        await tx.organization.update({
+          where: { id: orgId },
+          data: {
+            patronage: "PRO",
+            stripeSubscriptionId: session.subscription as string,
+          },
+        });
+
+        await tx.auditLog.create({
+          data: {
+            clientId: "SYSTEM",
+            action: "UPDATE",
+            target: "PATRONAGE",
+            details: {
+              orgId,
+              patronage: "PRO",
+            },
+          },
+        });
       });
     }
   }
 
   if (event.type === "customer.subscription.deleted") {
     const sub = event.data.object as Stripe.Subscription;
-    await prisma.organization.updateMany({
-      where: { stripeSubscriptionId: sub.id },
-      data: { patronage: "BASIC", stripeSubscriptionId: null },
+    await prisma.$transaction(async (tx) => {
+      await tx.organization.updateMany({
+        where: { stripeSubscriptionId: sub.id },
+        data: { patronage: "BASIC", stripeSubscriptionId: null },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          clientId: "SYSTEM",
+          action: "UPDATE",
+          target: "PATRONAGE",
+          details: { subscriptionId: sub.id, patronage: "BASIC" },
+        },
+      });
     });
   }
 
@@ -115,8 +167,11 @@ export async function createPortal(req: Request, res: Response) {
     const client = await prisma.client.findUnique({ where: { id: userId } });
     if (!client?.orgId) return res.status(400).json({ error: "Org not found" });
 
-    const org = await prisma.organization.findUnique({ where: { id: client.orgId } });
-    if (!org?.stripeCustomerId) return res.status(400).json({ error: "No Stripe customer" });
+    const org = await prisma.organization.findUnique({
+      where: { id: client.orgId },
+    });
+    if (!org?.stripeCustomerId)
+      return res.status(400).json({ error: "No Stripe customer" });
 
     const session = await stripe.billingPortal.sessions.create({
       customer: org.stripeCustomerId,

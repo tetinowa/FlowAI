@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import prisma from "../../lib/prisma";
+import  prisma  from "../../lib/prisma";
 import jwt from "jsonwebtoken";
 export const adminAccess: RequestHandler = async (req, res) => {
   try {
@@ -18,7 +18,10 @@ export const adminAccess: RequestHandler = async (req, res) => {
       return res.status(403).json({ success: false, message: "aibfiwbf" });
     }
 
-    const accessToken = jwt.sign({ adminId: usernameMatch.id, username: usernameMatch.username }, `${process.env.ACCESSTOKEN}`);
+    const accessToken = jwt.sign(
+      { adminId: usernameMatch.id, username: usernameMatch.username },
+      `${process.env.ACCESSTOKEN}`,
+    );
 
     return res.status(201).json({ success: true, res: accessToken });
   } catch (e) {

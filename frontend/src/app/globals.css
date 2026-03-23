@@ -128,3 +128,15 @@
 .chatBubble {
   z-index: 9999;
 }
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.adminsidebarSlide {
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}

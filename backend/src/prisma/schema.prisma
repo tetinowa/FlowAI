@@ -1,30 +1,32 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../prisma/generated"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Organization {
-  id              String            @id @unique
-  name            String            @default("")
-  industry        Industry
+  id                   String             @id @unique
+  name                 String             @default("")
+  industry             Industry
   patronage            Subscription
+  createdAt            DateTime           @default(now())
+  address              String
+  description          String
+  emailAddress         String
+  phoneNumber          String
   stripeCustomerId     String?
   stripeSubscriptionId String?
-  createdAt            DateTime          @default(now())
-  address              String
-  description     String
-  emailAddress    String
-  phoneNumber     String
-  members         Client[]
-  financeData     Finance[]
-  financeAnalyses FinanceAnalysis[]
-  InviteCode      InviteCode[]
-  posts           Post[]
-  marketingStrategy MarketingStrategy?
+  members              Client[]
+  financeData          Finance[]
+  financeAnalyses      FinanceAnalysis[]
+  InviteCode           InviteCode[]
+  marketingStrategy    MarketingStrategy?
+  posts                Post[]
+  aiUsages             AiUsage[]
+  marketinAIUsages     MarketinAIUsage[]
 }
 
 model MarketingStrategy {
@@ -40,15 +42,21 @@ model MarketingStrategy {
 }
 
 model Client {
-  id         String           @id @unique
-  orgId      String?
-  role       MemberAccessType
-  email      String
-  firstname  String
-  lastname   String
-  profilePic String?
-  createdAt  DateTime         @default(now())
-  ofOrg      Organization?    @relation(fields: [orgId], references: [id])
+  id               String            @id @unique
+  orgId            String?
+  role             MemberAccessType
+  email            String
+  firstname        String
+  lastname         String
+  profilePic       String?
+  createdAt        DateTime          @default(now())
+  ofOrg            Organization?     @relation(fields: [orgId], references: [id])
+  auditLogs        AuditLog[]
+  phoneNumber      String?
+  personalEmail    String?
+  lastSeenAt       DateTime          @default(now())
+  aiUsages         AiUsage[]
+  marketinAIUsages MarketinAIUsage[]
 }
 
 model Finance {
@@ -80,10 +88,10 @@ model Post {
   title       String
   content     String       @default("")
   platform    String
-  images      Json         @default("[]")
   reach       Int          @default(0)
   publishedAt DateTime     @default(now())
   published   Boolean      @default(false)
+  images      Json         @default("[]")
   org         Organization @relation(fields: [orgId], references: [id])
 }
 
@@ -119,8 +127,49 @@ enum MemberAccessType {
   MEMBER
 }
 
-
 enum Subscription {
   BASIC
   PRO
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  JOIN
+}
+
+enum AuditTarget {
+  ORGANIZATION
+  CLIENT
+  INVITE_CODE
+  PATRONAGE
+}
+
+model AuditLog {
+  id       String      @id @default(cuid())
+  clientId String
+  action   AuditAction
+  target   AuditTarget
+  details  Json?
+  date     DateTime    @default(now())
+  client   Client      @relation(fields: [clientId], references: [id])
+}
+
+model AiUsage {
+  id       String       @id @default(cuid())
+  clientId String
+  orgId    String
+  date     DateTime     @default(now())
+  client   Client       @relation(fields: [clientId], references: [id])
+  org      Organization @relation(fields: [orgId], references: [id])
+}
+
+model MarketinAIUsage {
+  id       String       @id @default(cuid())
+  clientId String
+  orgId    String
+  date     DateTime     @default(now())
+  client   Client       @relation(fields: [clientId], references: [id])
+  org      Organization @relation(fields: [orgId], references: [id])
 }

@@ -34,7 +34,7 @@ export const getCompany: RequestHandler = async (req, res) => {
   try {
     const clerkId = req.clerkUserId;
     if (!clerkId) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "clerkId not found" });
     }
 
     const client = await prisma.client.findUnique({
@@ -46,7 +46,17 @@ export const getCompany: RequestHandler = async (req, res) => {
       return res.status(404).json({ message: "Client not found" });
     }
 
-    return res.status(200).json({ success: true, data: client });
+    const orgId = client.orgId;
+    if (!orgId) {
+      return res.status(404).json({
+        message: "OrgID cannot be found in user data.",
+        success: false,
+      });
+    }
+    const company = await prisma.organization.findUnique({
+      where: { id: orgId },
+    });
+    return res.status(200).json({ success: true, company });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Fetch failed" });

@@ -48,3 +48,25 @@ export const deleteUser: RequestHandler = async (req, res) => {
       .json({ message: "seomthign wehfguibw", success: false });
   }
 };
+
+export const getUsersofOrgbyId: RequestHandler = async (req, res) => {
+  try {
+    const { orgId } = req.params;
+    if (!orgId) {
+      return res
+        .status(404)
+        .json({ message: "couldnt parse orgId", success: false });
+    }
+    const usersToReturn = await prisma.client.findMany({
+      where: {
+        orgId: orgId as string,
+      },
+    });
+    return res.status(200).json({ success: true, usersToReturn });
+  } catch (e) {
+    console.log(e);
+    return res
+      .status(500)
+      .json({ message: "theres been error", success: false });
+  }
+};
