@@ -56,7 +56,7 @@ export const getCompany: RequestHandler = async (req, res) => {
     const company = await prisma.organization.findUnique({
       where: { id: orgId },
     });
-    return res.status(200).json({ success: true, company });
+    return res.status(200).json({ success: true, data: { ofOrg: company } });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Fetch failed" });
