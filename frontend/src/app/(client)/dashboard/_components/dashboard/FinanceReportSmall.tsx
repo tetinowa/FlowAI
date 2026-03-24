@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { AiResult } from "@/app/(client)/finance/page";
@@ -54,10 +54,6 @@ export const FinanceReportSmall = ({ aiResult }: GraphicSectionProps) => {
       ? `${currentKey.slice(0, 4)} оны ${MONTH_NAMES[Number(currentKey.slice(5, 7)) - 1]}`
       : "Бүх сар";
 
-  console.log("currentMonthData", currentMonthData);
-  console.log("currentKey", currentKey);
-  console.log("monthlabel", monthLabel);
-  console.log("monthly", aiResult?.monthly);
 
   const expenseData = (
     monthIndex === -1
@@ -135,10 +131,7 @@ export const FinanceReportSmall = ({ aiResult }: GraphicSectionProps) => {
       .join("");
 
     const tipsHtml = (aiResult.tips ?? [])
-      .map(
-        (t: string, i: number) =>
-          `<li style="margin-bottom:8px">${i + 1}. ${t}</li>`,
-      )
+      .map((t: string, i: number) => `<li style="margin-bottom:8px">${i + 1}. ${t}</li>`)
       .join("");
 
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
@@ -179,6 +172,7 @@ export const FinanceReportSmall = ({ aiResult }: GraphicSectionProps) => {
     <table>${expenseRows}</table>
     <h2>Сар бүрийн задаргаа</h2>
     <table>${monthlyHtml}</table>
+    ${tipsHtml ? `<h2>AI Зөвлөмж</h2><ul>${tipsHtml}</ul>` : ""}
     <script>window.onload=()=>{window.print();}<\/script>
     </body></html>`;
 

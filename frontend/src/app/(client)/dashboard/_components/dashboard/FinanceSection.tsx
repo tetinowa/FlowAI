@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-import { Wallet } from "lucide-react";
+import { Wallet, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { SectionHeader } from "./SectionHeader";
 import { apiFetch } from "@/lib/apiFetch";
 import { FinanceReportSmall } from "./FinanceReportSmall";
@@ -140,48 +140,49 @@ export function FinanceSection() {
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Нийт орлого */}
-        <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">
-            Нийт орлого
-          </p>
-          <div className="flex items-baseline gap-2 mt-2">
-            <span className="text-2xl font-bold text-[#16a34a]">
-              {fmt(revenue)}
-            </span>
-            {/* <span className="text-xs font-bold text-emerald-500">
-              +{profitPct}%
-            </span> */}
+        <div className="bg-card p-6 rounded-xl border border-border shadow-sm overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl bg-linear-to-r from-emerald-400 to-green-500" />
+          <div className="flex items-start justify-between">
+            <p className="text-sm font-medium text-muted-foreground">Нийт орлого</p>
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-emerald-600" />
+            </div>
           </div>
+          <p className="text-2xl font-bold text-emerald-600 mt-3">{fmt(revenue)}</p>
         </div>
 
         {/* Нийт зарлага */}
-        <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">
-            Нийт зарлага
-          </p>
-          <div className="flex items-baseline gap-2 mt-2">
-            <span className="text-2xl font-bold text-[#dc2626]">
-              {fmt(expense)}
-            </span>
-            {/* <span className="text-xs font-bold text-rose-500">
-              -{expensePct}%
-            </span> */}
+        <div className="bg-card p-6 rounded-xl border border-border shadow-sm overflow-hidden relative">
+          <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl bg-linear-to-r from-rose-400 to-red-500" />
+          <div className="flex items-start justify-between">
+            <p className="text-sm font-medium text-muted-foreground">Нийт зарлага</p>
+            <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center">
+              <TrendingDown className="w-4 h-4 text-rose-600" />
+            </div>
           </div>
+          <p className="text-2xl font-bold text-rose-600 mt-3">{fmt(expense)}</p>
         </div>
 
         {/* Цэвэр ашиг */}
-        <div className="lg:col-span-2 bg-card p-6 rounded-xl border border-border shadow-sm flex items-center justify-between">
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Ашиг</p>
-            <p
-              className={`text-2xl font-bold ${netProfit >= 0 ? "text-[#16a34a]" : "text-rose-500"}`}
-            >
-              {netProfit >= 0 ? "+" : ""}
-              {fmt(netProfit)}
-            </p>
-            <p className="text-xs text-muted-foreground">Орлого - Зарлага</p>
+        <div className="lg:col-span-2 bg-card p-6 rounded-xl border border-border shadow-sm overflow-hidden relative">
+          <div className={`absolute top-0 left-0 right-0 h-1 rounded-t-xl ${netProfit >= 0 ? "bg-linear-to-r from-indigo-400 to-violet-500" : "bg-linear-to-r from-rose-400 to-red-500"}`} />
+          <div className="flex items-start justify-between">
+            <p className="text-sm font-medium text-muted-foreground">Цэвэр ашиг</p>
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
+              <DollarSign className="w-4 h-4 text-indigo-600" />
+            </div>
           </div>
-          <div className="h-16 w-32 flex items-end gap-1"></div>
+          <div className="flex items-baseline gap-2 mt-3">
+            <p className={`text-2xl font-bold ${netProfit >= 0 ? "text-indigo-600" : "text-rose-500"}`}>
+              {netProfit >= 0 ? "+" : ""}{fmt(netProfit)}
+            </p>
+            {revenue > 0 && (
+              <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${netProfit >= 0 ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30" : "bg-rose-50 text-rose-600 dark:bg-rose-900/30"}`}>
+                {profitPct}%
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Орлого - Зарлага</p>
         </div>
       </div>
       <FinanceReportSmall aiResult={aiResult} />

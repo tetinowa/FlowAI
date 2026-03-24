@@ -14,10 +14,8 @@ export function TopBar() {
     <header className="h-16 border-b border-border bg-background px-4 flex items-center justify-between z-10 shrink-0">
       <div className="flex items-center gap-3 w-full max-w-md">
         <SidebarTrigger />
-        {/* Search */}
       </div>
 
-      {/* Actions */}
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
