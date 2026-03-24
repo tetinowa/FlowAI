@@ -3,7 +3,7 @@
 import { Search, Bell, HelpCircle, ChevronDown, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { UserButton } from "@clerk/nextjs";
 
@@ -15,13 +15,6 @@ export function TopBar() {
       <div className="flex items-center gap-3 w-full max-w-md">
         <SidebarTrigger />
         {/* Search */}
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            className="pl-10 bg-muted border-none focus-visible:ring-[#5048e5]/50"
-            placeholder="Шинжилгээ, даалгавар эсвэл тохиргоо хайх..."
-          />
-        </div>
       </div>
 
       {/* Actions */}
@@ -30,8 +23,7 @@ export function TopBar() {
           variant="ghost"
           size="icon"
           className="relative text-muted-foreground"
-          aria-label="Мэдэгдэлүүд"
-        >
+          aria-label="Мэдэгдэлүүд">
           <Bell className="w-5 h-5" />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-background" />
         </Button>
@@ -39,8 +31,7 @@ export function TopBar() {
           variant="ghost"
           size="icon"
           className="text-muted-foreground"
-          aria-label="Тусламж"
-        >
+          aria-label="Тусламж">
           <HelpCircle className="w-5 h-5" />
         </Button>
         <Button
@@ -52,8 +43,7 @@ export function TopBar() {
               ? "Цайвар горим руу шилжих"
               : "Харанхуй горим руу шилжих"
           }
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        >
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
           <Sun className="w-5 h-5 dark:hidden" />
           <Moon className="w-5 h-5 hidden dark:block" />
         </Button>
