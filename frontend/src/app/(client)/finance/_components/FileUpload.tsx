@@ -522,7 +522,10 @@ export default function FileUpload({ onResult }: FileUploadProps) {
       const response = await fetch("/api/finance-analyze", {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ transactions: transactionsWithMonth, clientId: userId }),
+        body: JSON.stringify({
+          transactions: transactionsWithMonth,
+          clientId: userId,
+        }),
       });
       if (!response.ok) {
         const text = await response.text();
@@ -531,11 +534,10 @@ export default function FileUpload({ onResult }: FileUploadProps) {
         );
       }
       const result = await response.json();
-      console.log("aiResult:", result);
       setAiResult(result);
       setActiveTab("нийт");
       onResult?.(result);
-
+      console.log("aiResult:", result);
       const token = await getToken();
       const authHeader = {
         "Content-type": "application/json",

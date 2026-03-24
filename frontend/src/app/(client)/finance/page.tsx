@@ -1,9 +1,7 @@
 "use client";
 import { useState } from "react";
-import { AISection } from "./_components/AISection";
 import FileUpload from "./_components/FileUpload";
 import { HeadSection } from "./_components/HeadSection";
-import { FinanceReport } from "./_components/FinanceReport";
 
 export interface AiCategory {
   name: string;

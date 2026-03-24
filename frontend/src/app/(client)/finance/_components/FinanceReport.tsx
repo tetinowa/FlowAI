@@ -273,6 +273,20 @@ export const FinanceReport = ({
                 </button>
               </div>
             )}
+            <Card className="w-full mt-4 border-indigo-100 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-950/40 shadow-sm rounded-2xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base text-indigo-700 dark:text-indigo-300">
+                  <Sparkles className="h-5 w-5" />
+                  Ерөнхий дүгнэлт
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm">
+                  {aiResult?.summary ??
+                    "AI шинжилгээ хийснээр энд дүгнэлт харагдана."}
+                </p>
+              </CardContent>
+            </Card>
 
             {currentTransactions.length === 0 ? (
               <p className="text-gray-400 text-sm py-4">
@@ -372,20 +386,6 @@ export const FinanceReport = ({
               </div>
             )}
           </div>
-        </CardContent>
-      </Card>
-      <Card className="w-full mt-4 border-indigo-100 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-950/40 shadow-sm rounded-2xl">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base text-indigo-700 dark:text-indigo-300">
-            <Sparkles className="h-5 w-5" />
-            Ерөнхий дүгнэлт
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-sm">
-            {aiResult?.summary ??
-              "AI шинжилгээ хийснээр энд дүгнэлт харагдана."}
-          </p>
         </CardContent>
       </Card>
     </div>

@@ -2,7 +2,6 @@
 
 import { FinanceSection } from "@/app/(client)/dashboard/_components/dashboard/FinanceSection";
 import { MarketingSection } from "@/app/(client)/dashboard/_components/dashboard/MarketingSection";
-import { AIInsightBanner } from "@/app/(client)/dashboard/_components/dashboard/AIInsightBanner";
 import { useUser } from "@clerk/nextjs";
 
 export default function DashboardPage() {
