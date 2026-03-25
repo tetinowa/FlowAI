@@ -223,3 +223,39 @@ Start date: ${todayISO}`,
     );
   }
 }
+async function translateToMongolian(text: string): Promise<string> {
+  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
+  const res = await fetch(
+    `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        q: text,
+        source: "en",
+        target: "mn",
+        format: "text",
+      }),
+    },
+  );
+  const data = await res.json();
+  return data.data.translations[0].translatedText as string;
+}
+
+async function fixMongolianGrammar(
+  text: string,
+  openai: OpenAI,
+): Promise<string> {
+  const result = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a Mongolian language editor. Fix grammar, spelling, and phrasing issues in the given Mongolian text. Keep the meaning and tone intact. Return only the corrected text with no explanation.",
+      },
+      { role: "user", content: text },
+    ],
+  });
+  return result.choices[0].message.content ?? text;
+}
