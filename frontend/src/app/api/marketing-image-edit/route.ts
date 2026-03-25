@@ -40,7 +40,10 @@ export async function POST(request: NextRequest) {
     }
 
     const response = await openai.images.edit(editParams);
-    const editedImageBase64 = response.data[0].b64_json;
+    if (!response.data || response.data.length === 0) {
+            throw new Error("No image data returned from OpenAI");
+    }
+        const editedImageBase64 = response.data[0].b64_json;
 
     return NextResponse.json(
       { image: `data:image/png;base64,${editedImageBase64}` },
